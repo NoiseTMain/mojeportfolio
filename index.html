@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adam Horvath | Portfolio & Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gold-text { background: linear-gradient(90deg, #AA8022, #D4AF37, #F3E5AB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #cursor-glow { position: fixed; width: 450px; height: 450px; background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 0; }
+        .admin-view { display: none; }
+        input, textarea { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        input:focus, textarea:focus { border-color: #D4AF37 !important; outline: none; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <div id="cursor-glow"></div>
+
+    <!-- NAVIGACE -->
+    <nav id="public-nav" class="fixed w-full z-[60] p-6 flex justify-between items-center glass border-b border-white/5">
+        <div onclick="unlockAdmin()" class="text-2xl font-black tracking-tighter cursor-pointer hover:scale-110 transition duration-300">AH<span class="text-[#D4AF37]">.</span></div>
+        <div class="flex gap-8 text-[10px] uppercase tracking-[0.3em] font-light">
+            <a href="#projekty" class="hover:text-[#D4AF37] transition">Projekty</a>
+            <a href="#kontakt" class="hover:text-[#D4AF37] transition">Kontakt</a>
+        </div>
+    </nav>
+
+    <!-- PUBLIC OBSAH -->
+    <div id="public-content">
+        <!-- HERO -->
+        <section class="min-h-screen flex items-center justify-center px-6 relative">
+            <div class="z-10 text-center">
+                <p class="text-[#D4AF37] tracking-[0.8em] uppercase text-[10px] mb-4 opacity-70">Personal Portfolio 2026</p>
+                <h1 class="text-6xl md:text-9xl font-black italic tracking-tighter mb-8 uppercase">Adam <br><span class="gold-text italic">Horvath</span></h1>
+                <div class="h-[1px] w-20 bg-gold-500 mx-auto mb-8"></div>
+                <p class="text-zinc-500 tracking-[0.2em] font-light max-w-lg mx-auto mb-12 leading-relaxed text-sm">Vytvářím digitální ekosystémy s důrazem na ultra-luxusní design a futuristické technologie.</p>
+                <a href="#kontakt" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-[#D4AF37] transition duration-500 shadow-xl">ZAČÍT PROJEKT</a>
+            </div>
+        </section>
+
+        <!-- PROJEKTY -->
+        <section id="projekty" class="py-32 px-6 container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div class="space-y-6">
+                    <div class="h-[400px] glass rounded-3xl overflow-hidden group">
+                        <div class="w-full h-full bg-zinc-900 group-hover:scale-105 transition duration-700"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold uppercase italic">Cyber Architecture</h3>
+                    <p class="text-zinc-500 text-sm tracking-wide">Next-gen cloudová infrastruktura.</p>
+                </div>
+                <div class="space-y-6 mt-20">
+                    <div class="h-[400px] glass rounded-3xl overflow-hidden group">
+                        <div class="w-full h-full bg-zinc-900 group-hover:scale-105 transition duration-700"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold uppercase italic">Aura Interface</h3>
+                    <p class="text-zinc-500 text-sm tracking-wide">UX/UI design pro autonomní systémy.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- KONTAKT -->
+        <section id="kontakt" class="py-32 px-6">
+            <div class="glass p-12 max-w-2xl mx-auto rounded-[40px] border border-white/10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 blur-[80px]"></div>
+                <h2 class="text-4xl font-black mb-2 text-center uppercase italic">Kontakt</h2>
+                <p class="text-zinc-500 text-center mb-12 text-sm tracking-widest uppercase">Napište svou vizi</p>
+                
+                <form id="contact-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="name" placeholder="Jméno" required class="w-full p-5 rounded-2xl">
+                        <input type="email" id="email" placeholder="Email" required class="w-full p-5 rounded-2xl">
+                    </div>
+                    <textarea id="message" placeholder="Vaše zpráva..." rows="4" required class="w-full p-5 rounded-2xl resize-none"></textarea>
+                    <button type="submit" id="submit-btn" class="w-full py-5 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-[#D4AF37] transition-all duration-500">Odeslat zprávu</button>
+                </form>
+                <div id="status" class="mt-6 text-center font-bold tracking-widest text-xs"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="admin-panel" class="admin-view fixed inset-0 z-[100] bg-[#050505] overflow-y-auto p-4 md:p-12">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-12">
+                <div>
+                    <h1 class="text-4xl font-black gold-text italic uppercase">Admin</h1>
+                    <p class="text-zinc-500 text-[10px] tracking-[0.4em] uppercase">Příchozí poptávky</p>
+                </div>
+                <button onclick="location.reload()" class="px-6 py-2 glass rounded-full hover:bg-white hover:text-black transition text-xs font-bold uppercase tracking-widest">Odhlásit</button>
+            </div>
+
+            <div id="messages-container" class="grid grid-cols-1 gap-4">
+                <!-- Zprávy se načtou sem -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // !!! DOPLŇ SVÉ ÚDAJE ZE SUPABASE ZDE !!!
+        const SUPABASE_URL = 'TVOJE_URL_ADRESA';
+        const SUPABASE_ANON_KEY = 'TVŮJ_ANON_KLÍČ';
+        const ADMIN_PASS = 'admin123'; // Tvůj kód pro vstup do adminu
+        
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // MOUSE GLOW
+        const glow = document.getElementById('cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // FORMULÁŘ
+        const form = document.getElementById('contact-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('status');
+            btn.innerText = 'ODESÍLÁM...';
+            
+            const { error } = await sb.from('contact_messages').insert([{ 
+                name: document.getElementById('name').value, 
+                email: document.getElementById('email').value, 
+                message: document.getElementById('message').value 
+            }]);
+
+            if (error) {
+                status.innerText = 'CHYBA PŘI ODESÍLÁNÍ';
+                status.style.color = '#ef4444';
+            } else {
+                status.innerText = 'ZPRÁVA BYLA ÚSPĚŠNĚ DORUČENA';
+                status.style.color = '#D4AF37';
+                form.reset();
+                btn.innerText = 'ODESLÁNO';
+            }
+        };
+
+        // ADMIN SYSTÉM
+        async function unlockAdmin() {
+            const pass = prompt("Zadejte přístupový kód:");
+            if (pass === ADMIN_PASS) {
+                document.getElementById('public-nav').style.display = 'none';
+                document.getElementById('public-content').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                fetchMessages();
+            }
+        }
+
+        async function fetchMessages() {
+            const { data, error } = await sb.from('contact_messages').select('*').order('created_at', { ascending: false });
+            if (error) return;
+
+            const container = document.getElementById('messages-container');
+            container.innerHTML = data.length ? '' : '<p class="text-zinc-600 text-center py-20">Žádné nové zprávy</p>';
+            
+            data.forEach(msg => {
+                const date = new Date(msg.created_at).toLocaleDateString('cs-CZ');
+                container.innerHTML += `
+                    <div class="glass p-8 rounded-3xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-[10px] text-zinc-500 uppercase tracking-widest">${date}</span>
+                                <span class="text-[#D4AF37] font-bold uppercase tracking-tighter">${msg.name}</span>
+                            </div>
+                            <p class="text-zinc-400 text-sm mb-1">${msg.email}</p>
+                            <p class="text-white text-lg font-light">${msg.message}</p>
+                        </div>
+                        <button onclick="deleteMsg('${msg.id}')" class="text-[10px] font-black uppercase tracking-widest text-red-500/50 hover:text-red-500 transition">Smazat</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function deleteMsg(id) {
+            if (confirm('Smazat tuto zprávu?')) {
+                await sb.from('contact_messages').delete().eq('id', id);
+                fetchMessages();
+            }
+        }
+    </script>
+</body>
+</html>
