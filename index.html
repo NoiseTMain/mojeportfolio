@@ -3,44 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adam Horvath | Ultra Luxury Digital Experience</title>
-    <meta name="description" content="Futuristické portfolio a digitální vizitka - Adam Horvath">
+    <title>Adam Horvath | Ultra Luxury Digital & IT Experience</title>
+    <meta name="description" content="Futuristické portfolio, IT infrastruktura a osobní profil - Adam Horvath">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES & THEME SETUP
+           1. CSS VARIABLES & THEME SETUP (ENHANCED LUXURY)
            ========================================================================== */
         :root {
-            --bg-main: #030303;
-            --bg-secondary: #0a0a0a;
+            --bg-main: #020202;
+            --bg-secondary: #080808;
             --accent-gold: #D4AF37;
-            --accent-gold-dim: rgba(212, 175, 55, 0.3);
+            --accent-gold-dim: rgba(212, 175, 55, 0.25);
+            --accent-gold-bright: #FDE08B;
             --accent-amber: #FFBF00;
-            --text-main: #F5F5F5;
-            --text-muted: #A0A0A0;
+            --text-main: #FDFDFD;
+            --text-muted: #8E8E8E;
             
-            --glass-bg: rgba(20, 20, 20, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --glass-highlight: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(15, 15, 15, 0.45);
+            --glass-border: rgba(212, 175, 55, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.08);
             
-            --glow-gold: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2);
-            --glow-amber: 0 0 30px rgba(255, 191, 0, 0.5);
+            --glow-gold: 0 0 25px rgba(212, 175, 55, 0.3), 0 0 50px rgba(212, 175, 55, 0.1);
+            --glow-gold-intense: 0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3);
             
             --font-head: 'Cinzel', serif;
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Inter', sans-serif;
             
-            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            --transition-fast: all 0.3s ease;
+            --transition-smooth: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            --transition-fast: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             
+            --z-grid: 0;
             --z-noise: 9999;
             --z-cursor: 9998;
             --z-nav: 1000;
@@ -54,7 +56,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none; /* Custom cursor */
+            cursor: none;
         }
 
         html {
@@ -68,7 +70,7 @@
         body {
             overflow-x: hidden;
             position: relative;
-            background: radial-gradient(circle at 50% 50%, var(--bg-secondary) 0%, var(--bg-main) 100%);
+            background: radial-gradient(circle at 50% 30%, var(--bg-secondary) 0%, var(--bg-main) 100%);
             min-height: 100vh;
         }
 
@@ -77,33 +79,38 @@
             color: var(--bg-main);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-main);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-gold-dim);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-gold);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold-dim); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 
         /* ==========================================================================
            3. GLOBAL UTILITIES & EFFECTS
            ========================================================================== */
         
+        /* Luxury Grid Background */
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: var(--z-grid);
+            background-image: 
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
         /* Noise Overlay */
         .noise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
             z-index: var(--z-noise);
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* Custom Cursor */
@@ -116,106 +123,117 @@
             pointer-events: none;
         }
         .cursor-dot {
-            width: 8px; height: 8px;
-            background-color: var(--accent-gold);
+            width: 6px; height: 6px;
+            background-color: var(--accent-gold-bright);
+            box-shadow: 0 0 10px var(--accent-gold);
             transition: width 0.2s, height 0.2s;
         }
         .cursor-outline {
-            width: 40px; height: 40px;
+            width: 45px; height: 45px;
             border: 1px solid var(--accent-gold-dim);
-            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
         }
-        .cursor-hover .cursor-dot {
-            width: 0; height: 0;
-        }
+        .cursor-hover .cursor-dot { width: 0; height: 0; }
         .cursor-hover .cursor-outline {
-            width: 60px; height: 60px;
-            background-color: rgba(212, 175, 55, 0.1);
+            width: 70px; height: 70px;
+            background-color: rgba(212, 175, 55, 0.05);
             border-color: var(--accent-gold);
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(3px);
+            box-shadow: var(--glow-gold);
         }
 
-        /* Glassmorphism Classes */
+        /* Glassmorphism Classes (Enhanced) */
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
-            border-top: 1px solid var(--glass-highlight);
-            border-left: 1px solid var(--glass-highlight);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-radius: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.02);
+            border-radius: 16px;
             position: relative;
             overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(212, 175, 55, 0.05), var(--glow-gold);
+            transform: translateY(-5px);
         }
 
         .glass-panel::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
-            transform: skewX(-20deg);
-            transition: 0.7s;
+            top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
+            transform: skewX(-25deg);
+            transition: 0.9s ease;
         }
-        .glass-panel:hover::before {
-            left: 150%;
-        }
+        .glass-panel:hover::before { left: 200%; }
 
         /* Typography */
-        h1, h2, h3 { font-family: var(--font-display); font-weight: 700; }
+        h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; }
         .gold-text {
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-amber));
+            background: linear-gradient(135deg, var(--accent-gold-bright) 0%, var(--accent-gold) 50%, var(--accent-amber) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: var(--glow-gold);
+            display: inline-block;
         }
 
         .section-title {
             text-align: center;
-            font-size: 3.5rem;
-            margin-bottom: 4rem;
+            font-size: 4rem;
+            margin-bottom: 5rem;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
             transition: var(--transition-smooth);
+            font-family: var(--font-head);
+            color: var(--text-main);
         }
-        .section-title.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .section-title span { color: var(--accent-gold); }
+        .section-title.visible { opacity: 1; transform: translateY(0); }
 
-        section { padding: 100px 10vw; position: relative; }
+        section { padding: 120px 8vw; position: relative; z-index: 10; }
 
         /* Buttons */
         .btn-luxury {
-            display: inline-block;
-            padding: 15px 40px;
-            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 45px;
+            background: rgba(0,0,0,0.5);
             color: var(--accent-gold);
             font-family: var(--font-display);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-size: 0.85rem;
             font-weight: 600;
-            border: 1px solid var(--accent-gold);
-            border-radius: 30px;
+            border: 1px solid var(--accent-gold-dim);
+            border-radius: 40px;
             position: relative;
             overflow: hidden;
             transition: var(--transition-smooth);
             text-decoration: none;
+            backdrop-filter: blur(10px);
+        }
+        .btn-luxury::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transform: translateX(-100%); transition: var(--transition-smooth);
         }
         .btn-luxury::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 0;
-            background: var(--accent-gold);
-            transition: var(--transition-smooth);
-            z-index: -1;
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 0;
+            background: var(--accent-gold); transition: var(--transition-smooth); z-index: -1;
         }
         .btn-luxury:hover {
-            color: var(--bg-main);
-            box-shadow: var(--glow-gold);
+            color: var(--bg-main); border-color: var(--accent-gold); box-shadow: var(--glow-gold-intense);
         }
+        .btn-luxury:hover::before { transform: translateX(100%); }
         .btn-luxury:hover::after { height: 100%; }
 
         /* ==========================================================================
@@ -224,48 +242,41 @@
         nav {
             position: fixed;
             top: 0; left: 0; width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 30px 6vw;
+            display: flex; justify-content: space-between; align-items: center;
             z-index: var(--z-nav);
             transition: var(--transition-smooth);
         }
         nav.scrolled {
-            background: rgba(3, 3, 3, 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(2, 2, 2, 0.85);
+            backdrop-filter: blur(25px);
             border-bottom: 1px solid var(--glass-border);
-            padding: 15px 50px;
+            padding: 20px 6vw;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .nav-logo {
             font-family: var(--font-head);
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--text-main);
             text-decoration: none;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
+            font-weight: 900;
         }
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
+        .nav-logo span { color: var(--accent-gold); }
+        .nav-links { display: flex; gap: 45px; list-style: none; }
         .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: var(--transition-fast);
-            position: relative;
+            color: var(--text-muted); text-decoration: none;
+            font-family: var(--font-display); font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: var(--transition-fast); position: relative;
+            padding-bottom: 5px;
         }
         .nav-links a::after {
-            content: ''; position: absolute;
-            bottom: -5px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 1px; background: var(--accent-gold);
-            transition: var(--transition-smooth);
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 0; height: 1px; background: var(--accent-gold-bright);
+            transition: var(--transition-smooth); box-shadow: var(--glow-gold);
         }
-        .nav-links a:hover { color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .nav-links a:hover { color: var(--text-main); text-shadow: 0 0 15px rgba(255,255,255,0.4); }
         .nav-links a:hover::after { width: 100%; }
 
         /* ==========================================================================
@@ -273,292 +284,224 @@
            ========================================================================== */
         #hero {
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            position: relative;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            text-align: center; position: relative;
         }
-        #hero-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-        }
-        .hero-content {
-            z-index: 1;
-            position: relative;
-        }
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .hero-content { z-index: 1; position: relative; }
         .hero-subtitle {
-            font-family: var(--font-display);
-            color: var(--accent-gold);
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            opacity: 0;
+            font-family: var(--font-display); color: var(--accent-gold);
+            letter-spacing: 8px; text-transform: uppercase; margin-bottom: 25px;
+            font-size: 1rem; font-weight: 600; opacity: 0;
             animation: fadeIn 2s forwards 0.5s;
         }
         .hero-title {
-            font-size: 6rem;
-            line-height: 1.1;
-            margin-bottom: 30px;
-            opacity: 0;
-            animation: slideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s;
+            font-size: 7rem; line-height: 1.1; margin-bottom: 30px; font-family: var(--font-head);
+            opacity: 0; animation: slideUp 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards 1s;
         }
         .hero-desc {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            opacity: 0;
+            font-size: 1.25rem; color: var(--text-muted); max-width: 700px;
+            margin: 0 auto 50px; opacity: 0; font-weight: 300; line-height: 1.8;
             animation: fadeIn 2s forwards 1.5s;
         }
 
         /* ==========================================================================
-           6. ABOUT SECTION
+           6. ABOUT SECTION (EXPANDED WITH CV DATA)
            ========================================================================== */
         .about-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: stretch;
         }
         .about-text p {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: var(--text-muted);
-            margin-bottom: 20px;
+            font-size: 1.15rem; line-height: 1.9; color: var(--text-muted); margin-bottom: 20px; font-weight: 300;
         }
-        .about-stats {
-            display: flex;
-            gap: 30px;
-            margin-top: 40px;
+        .personal-info-list {
+            list-style: none; margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 30px;
         }
-        .stat-item {
-            padding: 20px;
-            text-align: center;
+        .personal-info-list li {
+            display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;
         }
-        .stat-number {
-            font-size: 3rem;
-            font-family: var(--font-head);
-            color: var(--accent-gold);
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        .personal-info-list span:first-child { color: var(--accent-gold); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
+        .personal-info-list span:last-child { color: var(--text-main); font-weight: 500;}
+        
+        .about-stats-container { display: flex; flex-direction: column; gap: 40px; }
+        .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-item { padding: 30px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
+        .stat-number { font-size: 3.5rem; font-family: var(--font-head); color: var(--accent-gold); margin-bottom: 10px; text-shadow: var(--glow-gold);}
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted);}
 
         /* ==========================================================================
-           7. SKILLS SECTION
+           7. SKILLS SECTION (MERGED WITH REAL CV SKILLS)
            ========================================================================== */
         .skills-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
         }
         .skill-category { padding: 40px; }
-        .skill-category h3 {
-            margin-bottom: 30px;
-            color: var(--accent-gold);
-            font-size: 1.5rem;
-        }
+        .skill-category h3 { margin-bottom: 35px; color: var(--accent-gold); font-size: 1.3rem; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;}
         .skill-item { margin-bottom: 25px; }
-        .skill-header {
-            display: flex; justify-content: space-between; margin-bottom: 10px;
-        }
+        .skill-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; font-weight: 500;}
+        .skill-header span:last-child { color: var(--accent-gold); font-family: var(--font-display);}
         .skill-bar-bg {
-            width: 100%; height: 6px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 3px; overflow: hidden;
-            position: relative;
+            width: 100%; height: 4px; background: rgba(255,255,255,0.05);
+            border-radius: 4px; overflow: hidden; position: relative;
         }
         .skill-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-amber));
-            width: 0; /* Animated via JS */
-            border-radius: 3px;
-            box-shadow: 0 0 10px var(--accent-gold);
-            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            height: 100%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-bright), var(--accent-amber));
+            width: 0; border-radius: 4px; box-shadow: 0 0 15px var(--accent-gold);
+            transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
+        
+        /* Soft Skills Tags */
+        .soft-skills-wrapper { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;}
+        .soft-skill-tag {
+            padding: 10px 20px; background: rgba(212, 175, 55, 0.05); border: 1px solid var(--glass-border);
+            border-radius: 30px; font-size: 0.85rem; color: var(--text-main); transition: var(--transition-fast);
+        }
+        .soft-skill-tag:hover { background: rgba(212, 175, 55, 0.2); border-color: var(--accent-gold); box-shadow: var(--glow-gold); transform: translateY(-2px);}
 
         /* ==========================================================================
-           8. TIMELINE (EXPERIENCE)
+           8. TIMELINE (EXPERIENCE & EDUCATION)
            ========================================================================== */
         .timeline {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 0;
+            position: relative; max-width: 1200px; margin: 0 auto; padding: 40px 0;
         }
         .timeline::before {
-            content: '';
-            position: absolute; top: 0; left: 50%;
-            width: 2px; height: 100%;
-            background: var(--glass-border);
+            content: ''; position: absolute; top: 0; left: 50%;
+            width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, var(--accent-gold-dim), transparent);
             transform: translateX(-50%);
         }
         .timeline-item {
-            margin-bottom: 60px;
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
+            margin-bottom: 80px; position: relative; width: 100%; display: flex; justify-content: flex-end;
         }
         .timeline-item:nth-child(even) { justify-content: flex-start; }
         .timeline-content {
-            width: 45%;
-            padding: 30px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(50px);
+            width: 45%; padding: 40px; position: relative; opacity: 0; transform: translateY(50px);
             transition: var(--transition-smooth);
         }
-        .timeline-item.visible .timeline-content {
-            opacity: 1; transform: translateY(0);
-        }
+        .timeline-item.visible .timeline-content { opacity: 1; transform: translateY(0); }
         .timeline-dot {
-            position: absolute;
-            top: 30px; left: -11%; /* Default right side */
-            width: 20px; height: 20px;
-            background: var(--bg-main);
-            border: 4px solid var(--accent-gold);
-            border-radius: 50%;
-            z-index: 10;
-            box-shadow: var(--glow-gold);
+            position: absolute; top: 40px; left: -12.5%; width: 24px; height: 24px;
+            background: var(--bg-main); border: 2px solid var(--accent-gold); border-radius: 50%;
+            z-index: 10; box-shadow: var(--glow-gold), inset 0 0 10px var(--accent-gold);
+            transition: var(--transition-fast);
         }
-        .timeline-item:nth-child(even) .timeline-dot { left: auto; right: -11%; }
-        .timeline-date { color: var(--accent-amber); font-weight: bold; margin-bottom: 10px; display: block; }
-        .timeline-title { font-size: 1.5rem; margin-bottom: 10px; }
+        .timeline-item:nth-child(even) .timeline-dot { left: auto; right: -12.5%; }
+        .timeline-item:hover .timeline-dot { background: var(--accent-gold); transform: scale(1.3); }
+        
+        .timeline-date { color: var(--accent-gold-bright); font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 15px; display: inline-block; padding: 5px 15px; background: rgba(212, 175, 55, 0.1); border-radius: 20px; border: 1px solid var(--glass-border); }
+        .timeline-title { font-size: 1.6rem; margin-bottom: 5px; font-family: var(--font-head); }
+        .timeline-company { font-size: 1rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 500; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px;}
+        .timeline-desc { color: #A0A0A0; line-height: 1.7; font-size: 0.95rem; }
+        
+        /* Node specific colors based on type */
+        .node-edu .timeline-dot { border-color: #4ade80; box-shadow: 0 0 20px rgba(74,222,128,0.4); }
+        .node-edu .timeline-date { color: #4ade80; background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.2); }
 
         /* ==========================================================================
-           9. PROJECTS
+           9. PROJECTS (KEPT FROM ORIGINAL)
            ========================================================================== */
         .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 40px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px;
         }
         .project-card {
-            height: 400px;
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            height: 450px; transform-style: preserve-3d; perspective: 1000px; border-radius: 16px;
         }
         .project-inner {
-            width: 100%; height: 100%;
-            padding: 30px;
+            width: 100%; height: 100%; padding: 40px;
             display: flex; flex-direction: column; justify-content: flex-end;
-            transition: transform 0.1s;
+            transition: transform 0.1s ease-out; border-radius: 16px;
+            border: 1px solid var(--glass-border);
         }
-        .project-category { color: var(--accent-gold); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;}
-        .project-title { font-size: 1.8rem; margin-bottom: 15px; transform: translateZ(30px); }
-        .project-desc { color: var(--text-muted); font-size: 0.9rem; transform: translateZ(20px); }
+        .project-category { color: var(--accent-gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; transform: translateZ(40px);}
+        .project-title { font-size: 2.2rem; margin-bottom: 15px; font-family: var(--font-head); transform: translateZ(60px); text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+        .project-desc { color: #DDD; font-size: 1rem; transform: translateZ(30px); line-height: 1.6; }
 
         /* ==========================================================================
            10. CONTACT FORM
            ========================================================================== */
         #kontakt { text-align: center; }
         .contact-wrapper {
-            max-width: 800px; margin: 0 auto;
-            padding: 50px; text-align: left;
+            max-width: 800px; margin: 0 auto; padding: 60px; text-align: left;
         }
-        .form-group { margin-bottom: 30px; position: relative; }
+        .form-group { margin-bottom: 40px; position: relative; }
         .form-control {
-            width: 100%;
-            padding: 15px 0;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--glass-border);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            font-size: 1.1rem;
-            transition: var(--transition-fast);
+            width: 100%; padding: 15px 0; background: transparent; border: none;
+            border-bottom: 1px solid var(--glass-border); color: var(--text-main);
+            font-family: var(--font-body); font-size: 1.1rem; transition: var(--transition-fast);
         }
-        .form-control:focus { outline: none; border-bottom-color: var(--accent-gold); }
+        .form-control:focus { outline: none; border-bottom-color: var(--accent-gold); box-shadow: 0 10px 10px -10px var(--accent-gold-dim); }
         .form-label {
-            position: absolute; top: 15px; left: 0;
-            color: var(--text-muted);
-            pointer-events: none;
-            transition: var(--transition-fast);
+            position: absolute; top: 15px; left: 0; color: var(--text-muted); pointer-events: none;
+            transition: var(--transition-fast); font-family: var(--font-display); letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem;
         }
-        .form-control:focus ~ .form-label,
-        .form-control:valid ~ .form-label {
-            top: -10px; font-size: 0.8rem; color: var(--accent-gold);
+        .form-control:focus ~ .form-label, .form-control:valid ~ .form-label {
+            top: -15px; font-size: 0.75rem; color: var(--accent-gold);
         }
-        .submit-btn { width: 100%; border: none; cursor: pointer; margin-top: 20px;}
+        .submit-btn { width: 100%; border: none; cursor: pointer; margin-top: 20px; font-size: 1rem; padding: 20px;}
         
-        #form-message {
-            margin-top: 20px; font-size: 1.1rem; text-align: center; display: none;
-        }
-        .msg-success { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
-        .msg-error { color: #f87171; text-shadow: 0 0 10px rgba(248,113,113,0.5); }
+        #form-message { margin-top: 25px; font-size: 1.1rem; text-align: center; display: none; font-family: var(--font-display); letter-spacing: 1px;}
+        .msg-success { color: #4ade80; text-shadow: 0 0 15px rgba(74,222,128,0.5); }
+        .msg-error { color: #f87171; text-shadow: 0 0 15px rgba(248,113,113,0.5); }
 
         /* ==========================================================================
            11. ADMIN PANEL (HIDDEN BY DEFAULT)
            ========================================================================== */
         #admin-portal {
-            display: none; /* Toggled via JS */
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-main); z-index: 3000;
-            overflow-y: auto;
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(2,2,2,0.95); backdrop-filter: blur(30px); z-index: 3000; overflow-y: auto;
         }
-        .admin-login-wrapper {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .admin-login-box { padding: 50px; width: 400px; text-align: center; }
+        .admin-login-wrapper { height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .admin-login-box { padding: 60px; width: 450px; text-align: center; }
         
-        .admin-dashboard { display: none; padding: 40px; }
+        .admin-dashboard { display: none; padding: 60px 8vw; }
         .admin-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;
+            margin-bottom: 50px; border-bottom: 1px solid var(--glass-border); padding-bottom: 30px;
         }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
-        .stat-card { padding: 30px; }
-        .stat-card h4 { color: var(--text-muted); margin-bottom: 10px; }
-        .stat-card .val { font-size: 2.5rem; color: var(--accent-gold); font-family: var(--font-display); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 50px; }
+        .stat-card { padding: 40px; text-align: center;}
+        .stat-card h4 { color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px;}
+        .stat-card .val { font-size: 3.5rem; color: var(--accent-gold); font-family: var(--font-head); text-shadow: var(--glow-gold);}
         
         .admin-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
         .data-table th, .data-table td {
-            padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border);
-            font-size: 0.9rem;
+            padding: 20px; text-align: left; border-bottom: 1px solid var(--glass-border);
+            font-size: 0.95rem; color: #CCC;
         }
-        .data-table th { color: var(--accent-gold); }
+        .data-table th { color: var(--accent-gold); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 2px;}
+        .chart-container { width: 100%; height: 350px; margin-top: 30px; }
 
-        .chart-container { width: 100%; height: 300px; margin-top: 20px; }
-
-        /* Footer Hidden Trigger for Admin */
-        .admin-trigger {
-            position: absolute; bottom: 10px; right: 10px; width: 20px; height: 20px; opacity: 0; cursor: pointer;
-        }
+        .admin-trigger { position: absolute; bottom: 0; right: 0; width: 40px; height: 40px; opacity: 0; cursor: pointer; z-index: 9999;}
 
         /* Animations */
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
         
-        /* Footer */
-        footer {
-            text-align: center; padding: 40px; border-top: 1px solid var(--glass-border);
-            position: relative;
-        }
+        footer { text-align: center; padding: 60px; border-top: 1px solid var(--glass-border); position: relative; z-index: 10; background: var(--bg-main);}
 
     </style>
 </head>
 <body>
 
     <!-- Effects -->
+    <div class="grid-overlay"></div>
     <div class="noise-overlay"></div>
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
     <!-- Nav -->
     <nav id="navbar">
-        <a href="#hero" class="nav-logo" data-hover>AH.</a>
+        <a href="#hero" class="nav-logo" data-hover>AH<span>.</span></a>
         <ul class="nav-links">
             <li><a href="#o-mne" data-hover>O mně</a></li>
             <li><a href="#dovednosti" data-hover>Dovednosti</a></li>
-            <li><a href="#zkusenosti" data-hover>Zkušenosti</a></li>
+            <li><a href="#zkusenosti" data-hover>Zkušenosti & Vzdělání</a></li>
             <li><a href="#projekty" data-hover>Projekty</a></li>
             <li><a href="#kontakt" data-hover>Kontakt</a></li>
         </ul>
@@ -568,49 +511,84 @@
     <section id="hero">
         <canvas id="hero-canvas"></canvas>
         <div class="hero-content">
-            <div class="hero-subtitle">Digitální Architekt</div>
+            <div class="hero-subtitle">Digitální Architekt & IT Specialista</div>
             <h1 class="hero-title gold-text">Adam Horvath</h1>
-            <p class="hero-desc">Tvořím ultra-prémiové digitální zážitky. Spojuji futuristický design s nekompromisní technologickou dokonalostí.</p>
-            <a href="#projekty" class="btn-luxury" data-hover>Prozkoumat portfolio</a>
+            <p class="hero-desc">Spojuji svět technologické infrastruktury a digitálního designu. Od přesnosti fyzického řemesla po komplexní architekturu IT systémů a ultra-luxusních webových aplikací.</p>
+            <a href="#o-mne" class="btn-luxury" data-hover>Inicializovat profil</a>
         </div>
     </section>
 
-    <!-- O Mně -->
+    <!-- O Mně (Expanded with Personal Data) -->
     <section id="o-mne">
-        <h2 class="section-title">O mně</h2>
+        <h2 class="section-title"><span>Identifikace</span> Subjektu</h2>
         <div class="about-grid">
-            <div class="glass-panel" style="padding: 40px;">
-                <h3 style="font-size: 2rem; margin-bottom: 20px;" class="gold-text">Vize budoucnosti</h3>
+            <div class="glass-panel" style="padding: 50px;">
+                <h3 style="font-size: 2.2rem; margin-bottom: 25px; font-family: var(--font-head);" class="gold-text">Profil & Vize</h3>
                 <div class="about-text">
-                    <p>Nejsem jen vývojář. Jsem inženýr digitálních emocí. Věřím, že webová stránka nemá být jen nosičem informací, ale pohlcujícím zážitkem, který rezonuje s uživatelem na hlubší úrovni.</p>
-                    <p>Inspiruji se estetikou značek jako Apple či Tesla a aplikuji principy kinematografie do interaktivního designu. Každý pixel, každá animace a každý řádek kódu má svůj přesný účel.</p>
+                    <p>Jsem energetický a cílevědomý profesionál s vášní pro kreativitu a lidské interakce. Věřím, že technologie nemá být jen chladným nástrojem, ale zážitkem. Mám schopnost se extrémně rychle přizpůsobit novým situacím i pracovním prostředím a vždy usiluji o to překračovat očekávání a dosahovat vynikajících výsledků.</p>
+                    <p>Díky mým mírným organizačním dovednostem a schopnosti řídit více úkolů současně, efektivně propojuji preciznost nabytou při studiu manuálních oborů s komplexním myšlením v IT sféře. Inspiruji se dokonalostí značek jako Apple či Tesla a aplikuji tyto principy do všeho, co tvořím.</p>
                 </div>
+                
+                <ul class="personal-info-list">
+                    <li><span>Datum narození</span> <span>16. duben 2007</span></li>
+                    <li><span>Lokalita</span> <span>Špitálská 12, 261 01 Příbram</span></li>
+                    <li><span>E-mail</span> <span>adamhorvath07@icloud.com</span></li>
+                    <li><span>Telefon</span> <span>+420 604 133 151</span></li>
+                    <li><span>Řidičské oprávnění</span> <span>Skupina AM, B1, B</span></li>
+                </ul>
             </div>
-            <div>
+            <div class="about-stats-container">
+                <div class="glass-panel stat-item" style="height: 100%;">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">Spolehlivost & Nasazení (%)</div>
+                </div>
                 <div class="about-stats">
                     <div class="glass-panel stat-item">
-                        <div class="stat-number" data-target="10">0</div>
-                        <div class="stat-label">Let praxe</div>
+                        <div class="stat-number" data-target="7">0</div>
+                        <div class="stat-label">Pracovních rolí</div>
                     </div>
                     <div class="glass-panel stat-item">
-                        <div class="stat-number" data-target="150">0</div>
-                        <div class="stat-label">Projektů</div>
-                    </div>
-                    <div class="glass-panel stat-item">
-                        <div class="stat-number" data-target="100">0</div>
-                        <div class="stat-label">Spokojenost %</div>
+                        <div class="stat-number" data-target="2">0</div>
+                        <div class="stat-label">Studované obory</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Dovednosti -->
+    <!-- Dovednosti (Merged WebDev + IT + Soft Skills + Languages) -->
     <section id="dovednosti">
-        <h2 class="section-title">Technologický arzenál</h2>
+        <h2 class="section-title">Technologický <span>Arzenál</span></h2>
         <div class="skills-container">
+            
+            <!-- Real IT Skills -->
             <div class="glass-panel skill-category">
-                <h3>Frontend Architecture</h3>
+                <h3>IT Infrastruktura & Sítě</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Nastavení bezpečnosti</span><span>100%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Správa LAN sítí (5-10 PC)</span><span>100%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>MS Windows Server AD & Group Policy</span><span>100%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>DHCP a DNS server</span><span>80%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Linux & PowerShell</span><span>40%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="40%"></div></div>
+                </div>
+            </div>
+
+            <!-- Fake Dev Skills (Kept as requested) -->
+            <div class="glass-panel skill-category">
+                <h3>Frontend & Development</h3>
                 <div class="skill-item">
                     <div class="skill-header"><span>JavaScript / TypeScript</span><span>95%</span></div>
                     <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="95%"></div></div>
@@ -623,9 +601,6 @@
                     <div class="skill-header"><span>CSS3 / Animations</span><span>98%</span></div>
                     <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="98%"></div></div>
                 </div>
-            </div>
-            <div class="glass-panel skill-category">
-                <h3>Backend & Data</h3>
                 <div class="skill-item">
                     <div class="skill-header"><span>Node.js / Python</span><span>90%</span></div>
                     <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="90%"></div></div>
@@ -634,82 +609,164 @@
                     <div class="skill-header"><span>Supabase / PostgreSQL</span><span>88%</span></div>
                     <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="88%"></div></div>
                 </div>
+            </div>
+
+            <!-- Soft Skills & Languages -->
+            <div class="glass-panel skill-category">
+                <h3>Osobní kompetence & Jazyky</h3>
                 <div class="skill-item">
-                    <div class="skill-header"><span>Cloud / DevOps</span><span>80%</span></div>
+                    <div class="skill-header"><span>Čeština</span><span>100%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Angličtina</span><span>80%</span></div>
                     <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80%"></div></div>
+                </div>
+                
+                <h4 style="margin-top: 35px; color: var(--accent-gold); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Klíčové vlastnosti</h4>
+                <div class="soft-skills-wrapper">
+                    <div class="soft-skill-tag">Energetický a cílevědomý</div>
+                    <div class="soft-skill-tag">Kreativita lidské interakce</div>
+                    <div class="soft-skill-tag">Extrémně rychlá adaptabilita</div>
+                    <div class="soft-skill-tag">Orientace na výsledky</div>
+                    <div class="soft-skill-tag">Organizační dovednosti</div>
+                    <div class="soft-skill-tag">Multitasking / Řízení více úkolů</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Zkušenosti Timeline -->
+    <!-- Zkušenosti & Vzdělání Timeline (Merged CV + Fake Dev) -->
     <section id="zkusenosti">
-        <h2 class="section-title">Cesta</h2>
+        <h2 class="section-title">Časová <span>Osa</span></h2>
         <div class="timeline">
+            
+            <!-- Real Edu -->
+            <div class="timeline-item node-edu">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">2023 - Aktuální</span>
+                    <h3 class="timeline-title">Strojní a manuální práce se dřevem (truhlář)</h3>
+                    <div class="timeline-company">Střední škola a školní jídelna Obořiště 1</div>
+                    <p class="timeline-desc">Studium precizního manuálního řemesla. Rozvoj smyslu pro detail, prostorovosti a tvorby fyzických struktur, což se prolíná do chápání architektury IT systémů.</p>
+                </div>
+            </div>
+
+            <!-- Real Work -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">Nedávné (CV)</span>
+                    <h3 class="timeline-title">Logistická podpora</h3>
+                    <div class="timeline-company">Alza s.r.o., Praha</div>
+                    <p class="timeline-desc">Koordinace a organizace přepravy zboží a materiálu v rámci skladových a distribučních procesů. Aplikace organizačních dovedností ve vysoce zátěžovém prostředí.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">Nedávné (CV)</span>
+                    <h3 class="timeline-title">Dohledové centrum</h3>
+                    <div class="timeline-company">PK HOLDING CZ s.r.o., Praha</div>
+                    <p class="timeline-desc">Koordinace reakce na bezpečnostní události a bezodkladné informování příslušných složek. Praxe v bezpečnostních procedurách a krizovém řízení.</p>
+                </div>
+            </div>
+
+            <!-- Fake Dev (Kept) -->
             <div class="timeline-item">
                 <div class="timeline-dot"></div>
                 <div class="glass-panel timeline-content">
                     <span class="timeline-date">2023 - Současnost</span>
                     <h3 class="timeline-title">Lead Creative Developer</h3>
-                    <p class="text-muted">Architektura ultra-luxusních webových aplikací pro Fortune 500 klienty. Vedení týmu, implementace WebGL a komplexních 3D interakcí.</p>
+                    <div class="timeline-company">Digital Luxury Agency</div>
+                    <p class="timeline-desc">Architektura ultra-luxusních webových aplikací pro Fortune 500 klienty. Vedení týmu, implementace WebGL a komplexních 3D interakcí.</p>
                 </div>
             </div>
+
+            <!-- Real Edu -->
+            <div class="timeline-item node-edu">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">2022 - 2023</span>
+                    <h3 class="timeline-title">Mechanik a opravář motorových vozidel</h3>
+                    <div class="timeline-company">SOŠ a SOU Sušice</div>
+                    <p class="timeline-desc">Ukončený první ročník automechanika. Získání hlubšího porozumění mechanickým systémům, motorice a diagnostice problémů.</p>
+                </div>
+            </div>
+
+            <!-- Real Work -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">Praxe (CV)</span>
+                    <h3 class="timeline-title">Gastronomie & Zákaznický servis</h3>
+                    <div class="timeline-company">Více korporátních společností</div>
+                    <p class="timeline-desc">
+                        <strong>Kuchař (PopEyes, Praha):</strong> Dodržování hygienických a bezpečnostních standardů při přípravě.<br><br>
+                        <strong>Prodejce/Runner (KFC, Brno/Praha):</strong> Aktivní prodej a prezentace produktů zákazníkům v maloobchodním prostředí.<br><br>
+                        <strong>Barista (McDonald's, Praha):</strong> Obsluha profesionálního kávovaru a mlýnků na kávu.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">Praxe (CV)</span>
+                    <h3 class="timeline-title">Řezník & Příprava potravin</h3>
+                    <div class="timeline-company">Kaufland (Příbram) / Pizza Martini (Dobříš)</div>
+                    <p class="timeline-desc">
+                        Zodpovědnost za kvalitu a čerstvost masných výrobků před expedicí v Kauflandu. Příprava těsta na pizzu podle stanovených receptur s důrazem na absolutní kvalitu a konzistenci (Pizza Martini). Zdokonalení v preciznosti a dodržování procesů.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Fake Dev (Kept) -->
             <div class="timeline-item">
                 <div class="timeline-dot"></div>
                 <div class="glass-panel timeline-content">
                     <span class="timeline-date">2020 - 2023</span>
                     <h3 class="timeline-title">Senior Fullstack Engineer</h3>
-                    <p class="text-muted">Vývoj škálovatelných SaaS platforem. Optimalizace výkonu, návrh databázových schémat a integrace real-time funkcí.</p>
+                    <div class="timeline-company">Tech SaaS Startup</div>
+                    <p class="timeline-desc">Vývoj škálovatelných SaaS platforem. Optimalizace výkonu, návrh databázových schémat a integrace real-time funkcí.</p>
                 </div>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="glass-panel timeline-content">
-                    <span class="timeline-date">2016 - 2020</span>
-                    <h3 class="timeline-title">Digital Designer & Developer</h3>
-                    <p class="text-muted">Začátky v agenturním prostředí. Tvorba e-commerce řešení, branding a interaktivní design.</p>
-                </div>
-            </div>
+            
         </div>
     </section>
 
-    <!-- Projekty -->
+    <!-- Projekty (Kept original items) -->
     <section id="projekty">
-        <h2 class="section-title">Vybraná díla</h2>
+        <h2 class="section-title">Vybraná <span>Díla</span></h2>
         <div class="projects-grid">
-            <!-- Project 1 -->
             <div class="glass-panel project-card tilt-element">
-                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48L3N2Zz4=') center/cover;">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(2,2,2,0.95), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxMTEiLz48L3N2Zz4=') center/cover;">
                     <div class="project-category">E-Commerce</div>
                     <h3 class="project-title gold-text">Aura Luxury</h3>
                     <p class="project-desc">Kompletní redesign high-end módní značky. Implementace 3D prohlížeče produktů a AR zkoušení.</p>
                 </div>
             </div>
-            <!-- Project 2 -->
             <div class="glass-panel project-card tilt-element">
-                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMyMjIiLz48L3N2Zz4=') center/cover;">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(2,2,2,0.95), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMyMjIiLz48L3N2Zz4=') center/cover;">
                     <div class="project-category">SaaS Dashboard</div>
                     <h3 class="project-title gold-text">Nexus Analytics</h3>
                     <p class="project-desc">Datový vizualizační nástroj pro kryptoměnové fondy s real-time WebSockets spojením.</p>
                 </div>
             </div>
-            <!-- Project 3 -->
             <div class="glass-panel project-card tilt-element">
-                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxMTEiLz48L3N2Zz4=') center/cover;">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(2,2,2,0.95), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwNTA1MDUiLz48L3N2Zz4=') center/cover;">
                     <div class="project-category">Web3 Platform</div>
                     <h3 class="project-title gold-text">Onyx Protocol</h3>
                     <p class="project-desc">Decentralizovaná směnárna s ultra-nízkou latencí a filmovými mikrointerakcemi.</p>
                 </div>
             </div>
         </div>
-        <div style="text-align: center; margin-top: 50px;">
-            <a href="#" class="btn-luxury" data-hover>Stáhnout kompletní CV (PDF)</a>
-        </div>
     </section>
 
     <!-- Kontakt -->
     <section id="kontakt">
-        <h2 class="section-title">Iniciovat spojení</h2>
+        <h2 class="section-title">Iniciovat <span>Spojení</span></h2>
         <div class="glass-panel contact-wrapper">
             <form id="contact-form">
                 <div class="form-group">
@@ -721,41 +778,38 @@
                     <label for="email" class="form-label">Komunikační kanál (E-mail)</label>
                 </div>
                 <div class="form-group">
-                    <textarea id="message" class="form-control" rows="4" required></textarea>
+                    <textarea id="message" class="form-control" rows="5" required></textarea>
                     <label for="message" class="form-label">Dekódovaná zpráva</label>
                 </div>
-                <button type="submit" class="btn-luxury submit-btn" data-hover>Odeslat signál</button>
+                <button type="submit" class="btn-luxury submit-btn" data-hover>Odeslat signál do systému</button>
             </form>
             <div id="form-message"></div>
         </div>
     </section>
 
     <footer>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2026 Adam Horvath. All systems nominal.</p>
-        <!-- Tajný trigger pro Admin panel -->
-        <div class="admin-trigger" id="open-admin" data-hover></div>
+        <p style="color: var(--text-muted); font-size: 0.95rem; letter-spacing: 1px; font-family: var(--font-display); text-transform: uppercase;">&copy; 2026 Adam Horvath. All systems nominal.</p>
+        <div class="admin-trigger" id="open-admin"></div>
     </footer>
 
     <!-- ==========================================================================
-         ADMIN PORTAL (Supabase Auth & Dashboard)
+         ADMIN PORTAL
          ========================================================================== -->
     <div id="admin-portal">
-        <!-- Login View -->
         <div class="admin-login-wrapper" id="admin-login-view">
             <div class="glass-panel admin-login-box">
-                <h2 class="gold-text" style="margin-bottom: 30px;">System Override</h2>
-                <input type="email" id="admin-email" class="form-control" placeholder="Admin ID" style="margin-bottom: 20px;">
-                <input type="password" id="admin-pass" class="form-control" placeholder="Passcode" style="margin-bottom: 30px;">
-                <button class="btn-luxury" id="admin-login-btn" style="width: 100%;">Přihlásit</button>
-                <div id="admin-error" style="color: red; margin-top: 15px; font-size: 0.8rem;"></div>
+                <h2 class="gold-text" style="margin-bottom: 30px; font-family: var(--font-head); font-size: 2.5rem;">System Override</h2>
+                <input type="email" id="admin-email" class="form-control" placeholder="Admin ID" style="margin-bottom: 25px;">
+                <input type="password" id="admin-pass" class="form-control" placeholder="Passcode" style="margin-bottom: 35px;">
+                <button class="btn-luxury" id="admin-login-btn" style="width: 100%; padding: 15px;">Přihlásit</button>
+                <div id="admin-error" style="color: #f87171; margin-top: 20px; font-size: 0.9rem;"></div>
             </div>
         </div>
 
-        <!-- Dashboard View -->
         <div class="admin-dashboard" id="admin-dashboard-view">
             <div class="admin-header">
-                <h2><span class="gold-text">AH.</span> Command Center</h2>
-                <button class="btn-luxury" id="admin-logout-btn" style="padding: 10px 20px; font-size: 0.8rem;">Odpojit</button>
+                <h2 style="font-size: 2.5rem; font-family: var(--font-head);"><span class="gold-text">AH.</span> Command Center</h2>
+                <button class="btn-luxury" id="admin-logout-btn" style="padding: 12px 25px; font-size: 0.8rem;">Odpojit</button>
             </div>
             
             <div class="stats-grid">
@@ -774,19 +828,19 @@
             </div>
 
             <div class="admin-tables">
-                <div class="glass-panel" style="padding: 20px;">
-                    <h3 class="gold-text">Zachycené signály (Zprávy)</h3>
+                <div class="glass-panel" style="padding: 30px;">
+                    <h3 class="gold-text" style="font-size: 1.5rem; margin-bottom: 10px;">Zachycené signály (Zprávy)</h3>
                     <table class="data-table" id="messages-table">
                         <thead><tr><th>Čas</th><th>Od</th><th>Zpráva</th></tr></thead>
-                        <tbody><!-- Filled via JS --></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
-                <div class="glass-panel" style="padding: 20px;">
-                    <h3 class="gold-text">Aktivita sítě (Návštěvy)</h3>
+                <div class="glass-panel" style="padding: 30px;">
+                    <h3 class="gold-text" style="font-size: 1.5rem; margin-bottom: 10px;">Aktivita sítě</h3>
                     <canvas id="visitors-chart" class="chart-container"></canvas>
                 </div>
             </div>
-            <button class="btn-luxury" id="close-admin-btn" style="margin-top: 40px;">Zpět na veřejnou zónu</button>
+            <button class="btn-luxury" id="close-admin-btn" style="margin-top: 50px;">Návrat do veřejné zóny</button>
         </div>
     </div>
 
@@ -794,11 +848,6 @@
          JAVASCRIPT LOGIC
          ========================================================================== -->
     <script>
-        /**
-         * SUPABASE KONFIGURACE
-         * ZDE DOPLŇ SVÉ ÚDAJE (Požadavky klienta).
-         * I bez platných klíčů poběží UI logiky, ale dotazy padnou na error.
-         */
         const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
         const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
         
@@ -806,18 +855,15 @@
         try {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch(e) {
-            console.error("Supabase init error (missing keys?):", e);
+            console.warn("Supabase missing credentials.");
         }
 
-        /* ==========================================================================
-           1. UI & ANIMATION ENGINE
-           ========================================================================== */
         class UIController {
             constructor() {
                 this.cursorDot = document.getElementById('cursor-dot');
                 this.cursorOutline = document.getElementById('cursor-outline');
                 this.navbar = document.getElementById('navbar');
-                this.hoverElements = document.querySelectorAll('[data-hover], input, textarea, button');
+                this.hoverElements = document.querySelectorAll('[data-hover], a, input, textarea, button');
                 this.sections = document.querySelectorAll('.section-title, .timeline-item');
                 this.statNumbers = document.querySelectorAll('.stat-number');
                 this.skillBars = document.querySelectorAll('.skill-bar-fill');
@@ -837,16 +883,9 @@
                 window.addEventListener('mousemove', (e) => {
                     const posX = e.clientX;
                     const posY = e.clientY;
-                    
-                    // Bez zpoždění pro tečku
                     this.cursorDot.style.left = `${posX}px`;
                     this.cursorDot.style.top = `${posY}px`;
-                    
-                    // Malé zpoždění pro outline (smooth trail)
-                    this.cursorOutline.animate({
-                        left: `${posX}px`,
-                        top: `${posY}px`
-                    }, { duration: 500, fill: "forwards", easing: "ease-out" });
+                    this.cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 400, fill: "forwards", easing: "ease-out" });
                 });
 
                 this.hoverElements.forEach(el => {
@@ -857,33 +896,21 @@
 
             initScroll() {
                 window.addEventListener('scroll', () => {
-                    if (window.scrollY > 50) {
-                        this.navbar.classList.add('scrolled');
-                    } else {
-                        this.navbar.classList.remove('scrolled');
-                    }
+                    if (window.scrollY > 80) this.navbar.classList.add('scrolled');
+                    else this.navbar.classList.remove('scrolled');
                 });
             }
 
             initIntersectionObserver() {
-                const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
-                
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             entry.target.classList.add('visible');
-                            
-                            // Animace statistik
-                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'o-mne') {
-                                this.animateStats();
-                            }
-                            // Animace skills
-                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'dovednosti') {
-                                this.animateSkills();
-                            }
+                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'o-mne') this.animateStats();
+                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'dovednosti') this.animateSkills();
                         }
                     });
-                }, observerOptions);
+                }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
 
                 this.sections.forEach(sec => observer.observe(sec));
             }
@@ -892,25 +919,19 @@
                 this.statNumbers.forEach(stat => {
                     const target = parseInt(stat.getAttribute('data-target'));
                     let current = 0;
-                    const increment = target / 50; // speed
                     const updateCounter = () => {
-                        current += increment;
+                        current += target / 60;
                         if(current < target) {
-                            stat.innerText = Math.ceil(current) + (target > 50 ? '+' : '');
+                            stat.innerText = Math.ceil(current);
                             requestAnimationFrame(updateCounter);
-                        } else {
-                            stat.innerText = target + (target > 50 ? '+' : '');
-                        }
+                        } else stat.innerText = target;
                     };
                     updateCounter();
                 });
             }
 
             animateSkills() {
-                this.skillBars.forEach(bar => {
-                    const width = bar.getAttribute('data-width');
-                    bar.style.width = width;
-                });
+                this.skillBars.forEach(bar => { bar.style.width = bar.getAttribute('data-width'); });
             }
 
             initTiltEffect() {
@@ -918,64 +939,46 @@
                     const inner = el.querySelector('.project-inner');
                     el.addEventListener('mousemove', e => {
                         const rect = el.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-                        
-                        const rotateX = ((y - centerY) / centerY) * -10;
-                        const rotateY = ((x - centerX) / centerX) * 10;
-                        
-                        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                        const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2; const centerY = rect.height / 2;
+                        inner.style.transform = `rotateX(${((y - centerY) / centerY) * -12}deg) rotateY(${((x - centerX) / centerX) * 12}deg)`;
                     });
-                    el.addEventListener('mouseleave', () => {
-                        inner.style.transform = `rotateX(0) rotateY(0)`;
-                    });
+                    el.addEventListener('mouseleave', () => inner.style.transform = `rotateX(0) rotateY(0)`);
                 });
             }
         }
 
-        /* ==========================================================================
-           2. CANVAS PARTICLE SYSTEM (HERO)
-           ========================================================================== */
         class ParticleEngine {
             constructor() {
                 this.canvas = document.getElementById('hero-canvas');
                 this.ctx = this.canvas.getContext('2d');
                 this.particles = [];
-                this.mouse = { x: null, y: null, radius: 150 };
+                this.mouse = { x: null, y: null, radius: 180 };
                 
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
-                this.canvas.addEventListener('mousemove', (e) => {
-                    this.mouse.x = e.x; this.mouse.y = e.y;
-                });
+                this.canvas.addEventListener('mousemove', (e) => { this.mouse.x = e.x; this.mouse.y = e.y; });
                 
                 this.initParticles();
                 this.animate();
             }
 
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
+            resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
 
             initParticles() {
                 this.particles = [];
-                const numParticles = (this.canvas.width * this.canvas.height) / 9000;
+                const numParticles = (this.canvas.width * this.canvas.height) / 7000;
                 for (let i = 0; i < numParticles; i++) {
-                    const x = Math.random() * this.canvas.width;
-                    const y = Math.random() * this.canvas.height;
-                    const size = Math.random() * 2;
-                    const speedX = (Math.random() * 1) - 0.5;
-                    const speedY = (Math.random() * 1) - 0.5;
-                    this.particles.push({ x, y, size, speedX, speedY, baseSize: size });
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
+                        size: Math.random() * 2.5, baseSize: Math.random() * 2.5,
+                        speedX: (Math.random() * 1.5) - 0.75, speedY: (Math.random() * 1.5) - 0.75
+                    });
                 }
             }
 
             animate() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
                 for (let i = 0; i < this.particles.length; i++) {
                     let p = this.particles[i];
                     p.x += p.speedX; p.y += p.speedY;
@@ -983,36 +986,26 @@
                     if (p.x < 0 || p.x > this.canvas.width) p.speedX *= -1;
                     if (p.y < 0 || p.y > this.canvas.height) p.speedY *= -1;
 
-                    // Mouse interaction
                     if (this.mouse.x != null) {
-                        let dx = this.mouse.x - p.x;
-                        let dy = this.mouse.y - p.y;
+                        let dx = this.mouse.x - p.x; let dy = this.mouse.y - p.y;
                         let distance = Math.sqrt(dx * dx + dy * dy);
                         if (distance < this.mouse.radius) {
-                            p.size = p.baseSize * 3;
-                            this.ctx.fillStyle = '#D4AF37';
+                            p.size = p.baseSize * 3; this.ctx.fillStyle = '#FDE08B';
                         } else {
-                            p.size = p.baseSize;
-                            this.ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                            p.size = p.baseSize; this.ctx.fillStyle = 'rgba(212,175,55,0.3)';
                         }
                     }
 
-                    this.ctx.beginPath();
-                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    this.ctx.fill();
+                    this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
 
-                    // Connect lines
                     for (let j = i; j < this.particles.length; j++) {
                         let p2 = this.particles[j];
-                        let dx = p.x - p2.x; let dy = p.y - p2.y;
-                        let dist = Math.sqrt(dx*dx + dy*dy);
-                        if (dist < 100) {
+                        let dist = Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2));
+                        if (dist < 120) {
                             this.ctx.beginPath();
-                            this.ctx.strokeStyle = `rgba(212, 175, 55, ${1 - dist/100})`;
-                            this.ctx.lineWidth = 0.5;
-                            this.ctx.moveTo(p.x, p.y);
-                            this.ctx.lineTo(p2.x, p2.y);
-                            this.ctx.stroke();
+                            this.ctx.strokeStyle = `rgba(212, 175, 55, ${0.4 - dist/300})`;
+                            this.ctx.lineWidth = 0.8;
+                            this.ctx.moveTo(p.x, p.y); this.ctx.lineTo(p2.x, p2.y); this.ctx.stroke();
                         }
                     }
                 }
@@ -1020,82 +1013,39 @@
             }
         }
 
-        /* ==========================================================================
-           3. SUPABASE TRACKING & FORM LOGIC
-           ========================================================================== */
         class TrackingAndData {
-            constructor() {
-                this.initTracking();
-                this.initForm();
-            }
-
+            constructor() { this.initTracking(); this.initForm(); }
             async initTracking() {
                 if(!supabase) return;
                 try {
-                    // Získání IP přes volnou API (pouze pro demo účely)
                     let ipRes = await fetch('https://api.ipify.org?format=json');
                     let ipData = await ipRes.json();
-                    
-                    // Zápis do Supabase `visitors`
-                    await supabase.from('visitors').insert([{
-                        ip_address: ipData.ip,
-                        user_agent: navigator.userAgent,
-                        device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
-                    }]);
-
-                    // Zápis eventu
-                    await supabase.from('analytics_events').insert([{
-                        event_name: 'page_load', path: window.location.pathname
-                    }]);
-                } catch(e) { console.log('Tracking not active (DB missing/CORS).'); }
+                    await supabase.from('visitors').insert([{ ip_address: ipData.ip, user_agent: navigator.userAgent, device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop' }]);
+                    await supabase.from('analytics_events').insert([{ event_name: 'page_load', path: window.location.pathname }]);
+                } catch(e) {}
             }
-
             initForm() {
                 const form = document.getElementById('contact-form');
                 const msgBox = document.getElementById('form-message');
-                
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    if(!supabase) {
-                        this.showMessage(msgBox, "Systém momentálně nekomunikuje se serverem (Chybí API klíče).", "msg-error");
-                        return;
-                    }
-
-                    const btn = form.querySelector('button');
-                    btn.innerText = "Šifruji & Odesílám...";
-                    
-                    const name = document.getElementById('name').value;
-                    const email = document.getElementById('email').value;
-                    const message = document.getElementById('message').value;
-
+                    if(!supabase) return this.showMessage(msgBox, "Systém momentálně nekomunikuje se serverem.", "msg-error");
+                    const btn = form.querySelector('button'); btn.innerText = "Šifruji & Odesílám...";
                     try {
-                        const { error } = await supabase.from('contact_messages').insert([
-                            { name, email, message }
-                        ]);
-
+                        const { error } = await supabase.from('contact_messages').insert([{
+                            name: document.getElementById('name').value, email: document.getElementById('email').value, message: document.getElementById('message').value
+                        }]);
                         if(error) throw error;
-                        
-                        this.showMessage(msgBox, "Signál úspěšně přijat. Odpovím v nejbližší době.", "msg-success");
-                        form.reset();
-                    } catch(err) {
-                        this.showMessage(msgBox, `Chyba přenosu: ${err.message}`, "msg-error");
-                    } finally {
-                        btn.innerText = "Odeslat signál";
-                    }
+                        this.showMessage(msgBox, "Signál úspěšně přijat.", "msg-success"); form.reset();
+                    } catch(err) { this.showMessage(msgBox, `Chyba přenosu: ${err.message}`, "msg-error"); } finally { btn.innerText = "Odeslat signál do systému"; }
                 });
             }
-
             showMessage(el, text, className) {
-                el.style.display = 'block';
-                el.innerText = text;
-                el.className = className;
+                el.style.display = 'block'; el.innerText = text; el.className = className;
                 setTimeout(() => el.style.display = 'none', 5000);
             }
         }
 
-        /* ==========================================================================
-           4. ADMIN PANEL & REALTIME DASHBOARD (CANVAS CHARTS)
-           ========================================================================== */
         class AdminController {
             constructor() {
                 this.trigger = document.getElementById('open-admin');
@@ -1103,176 +1053,82 @@
                 this.loginView = document.getElementById('admin-login-view');
                 this.dashView = document.getElementById('admin-dashboard-view');
                 this.closeBtn = document.getElementById('close-admin-btn');
-                
                 this.initEvents();
             }
-
             initEvents() {
-                // Skryté tlačítko v patičce
                 this.trigger.addEventListener('click', () => {
-                    this.portal.style.display = 'block';
-                    document.body.style.overflow = 'hidden'; // Lock scroll
-                    this.checkSession();
+                    this.portal.style.display = 'block'; document.body.style.overflow = 'hidden'; this.checkSession();
                 });
-
                 this.closeBtn.addEventListener('click', () => {
-                    this.portal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
+                    this.portal.style.display = 'none'; document.body.style.overflow = 'auto';
                 });
-
                 document.getElementById('admin-login-btn').addEventListener('click', () => this.login());
                 document.getElementById('admin-logout-btn').addEventListener('click', () => this.logout());
             }
-
             async checkSession() {
                 if(!supabase) return;
                 const { data: { session } } = await supabase.auth.getSession();
-                if(session) {
-                    this.showDashboard();
-                } else {
-                    this.showLogin();
-                }
+                session ? this.showDashboard() : this.showLogin();
             }
-
             async login() {
-                if(!supabase) {
-                    document.getElementById('admin-error').innerText = "Supabase DB není připojena.";
-                    return;
-                }
-                const email = document.getElementById('admin-email').value;
-                const pass = document.getElementById('admin-pass').value;
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-                
-                if(error) document.getElementById('admin-error').innerText = "Přístup zamítnut.";
-                else this.showDashboard();
+                if(!supabase) return document.getElementById('admin-error').innerText = "Supabase DB není připojena.";
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: document.getElementById('admin-email').value, password: document.getElementById('admin-pass').value
+                });
+                error ? document.getElementById('admin-error').innerText = "Přístup zamítnut." : this.showDashboard();
             }
-
-            async logout() {
-                if(supabase) await supabase.auth.signOut();
-                this.showLogin();
-            }
-
-            showLogin() {
-                this.loginView.style.display = 'flex';
-                this.dashView.style.display = 'none';
-            }
-
-            showDashboard() {
-                this.loginView.style.display = 'none';
-                this.dashView.style.display = 'block';
-                this.loadData();
-                this.initRealtime();
-            }
-
+            async logout() { if(supabase) await supabase.auth.signOut(); this.showLogin(); }
+            showLogin() { this.loginView.style.display = 'flex'; this.dashView.style.display = 'none'; }
+            showDashboard() { this.loginView.style.display = 'none'; this.dashView.style.display = 'block'; this.loadData(); this.drawCustomCanvasChart(); }
             async loadData() {
                 if(!supabase) return;
-                
-                // Fetch stats
                 const visitors = await supabase.from('visitors').select('id', { count: 'exact' });
                 const messages = await supabase.from('contact_messages').select('id', { count: 'exact' });
                 const events = await supabase.from('analytics_events').select('id', { count: 'exact' });
-                
                 document.getElementById('stat-visitors').innerText = visitors.count || 0;
                 document.getElementById('stat-messages').innerText = messages.count || 0;
                 document.getElementById('stat-events').innerText = events.count || 0;
 
-                // Fetch messages
                 const { data: msgs } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false }).limit(5);
-                const tbody = document.querySelector('#messages-table tbody');
-                tbody.innerHTML = '';
-                if(msgs) {
-                    msgs.forEach(m => {
-                        const d = new Date(m.created_at).toLocaleString('cs-CZ');
-                        tbody.innerHTML += `<tr><td>${d}</td><td>${m.email}</td><td>${m.message.substring(0,30)}...</td></tr>`;
-                    });
-                }
-
-                this.drawCustomCanvasChart();
+                const tbody = document.querySelector('#messages-table tbody'); tbody.innerHTML = '';
+                if(msgs) msgs.forEach(m => tbody.innerHTML += `<tr><td>${new Date(m.created_at).toLocaleString('cs-CZ')}</td><td>${m.email}</td><td>${m.message.substring(0,40)}...</td></tr>`);
             }
-
-            initRealtime() {
-                if(!supabase) return;
-                // Realtime poslech na zprávy
-                supabase.channel('custom-insert-channel')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contact_messages' }, payload => {
-                    this.loadData(); // Refresh UI upon new message
-                    // Play sound or notification logic could go here
-                })
-                .subscribe();
-            }
-
-            // Custom Charting bez externích knihoven (požadavek)
             drawCustomCanvasChart() {
-                const canvas = document.getElementById('visitors-chart');
-                const ctx = canvas.getContext('2d');
-                canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = 300;
-
-                // Mock data pro graf (pro ukázku, v reálu group by date z Supabase)
-                const data = [10, 25, 15, 40, 35, 60, 50]; 
-                const max = Math.max(...data);
-                
+                const canvas = document.getElementById('visitors-chart'); const ctx = canvas.getContext('2d');
+                canvas.width = canvas.parentElement.clientWidth; canvas.height = 350;
+                const data = [12, 30, 20, 50, 40, 80, 65]; const max = Math.max(...data);
                 ctx.clearRect(0,0, canvas.width, canvas.height);
+                const padding = 50; const width = canvas.width - padding*2; const height = canvas.height - padding*2; const step = width / (data.length - 1);
                 
-                const padding = 40;
-                const width = canvas.width - padding*2;
-                const height = canvas.height - padding*2;
-                const step = width / (data.length - 1);
-
-                // Grid lines
                 ctx.strokeStyle = 'rgba(255,255,255,0.05)';
                 for(let i=0; i<5; i++) {
-                    let y = padding + (height/4)*i;
-                    ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(padding+width, y); ctx.stroke();
+                    let y = padding + (height/4)*i; ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(padding+width, y); ctx.stroke();
                 }
-
-                // Line
-                ctx.beginPath();
-                ctx.strokeStyle = '#D4AF37';
-                ctx.lineWidth = 3;
                 
+                ctx.beginPath(); ctx.strokeStyle = '#FDE08B'; ctx.lineWidth = 4;
                 data.forEach((val, i) => {
-                    const x = padding + (i * step);
-                    const y = canvas.height - padding - ((val / max) * height);
-                    if(i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
+                    const x = padding + (i * step); const y = canvas.height - padding - ((val / max) * height);
+                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
                 });
                 ctx.stroke();
-
-                // Gradient Fill under line
-                ctx.lineTo(padding + width, canvas.height - padding);
-                ctx.lineTo(padding, canvas.height - padding);
-                ctx.closePath();
-                const grad = ctx.createLinearGradient(0, padding, 0, canvas.height-padding);
-                grad.addColorStop(0, 'rgba(212, 175, 55, 0.5)');
-                grad.addColorStop(1, 'rgba(212, 175, 55, 0)');
-                ctx.fillStyle = grad;
-                ctx.fill();
                 
-                // Points
+                ctx.lineTo(padding + width, canvas.height - padding); ctx.lineTo(padding, canvas.height - padding); ctx.closePath();
+                const grad = ctx.createLinearGradient(0, padding, 0, canvas.height-padding);
+                grad.addColorStop(0, 'rgba(253, 224, 139, 0.4)'); grad.addColorStop(1, 'rgba(212, 175, 55, 0)');
+                ctx.fillStyle = grad; ctx.fill();
+                
                 data.forEach((val, i) => {
-                    const x = padding + (i * step);
-                    const y = canvas.height - padding - ((val / max) * height);
-                    ctx.beginPath();
-                    ctx.arc(x, y, 6, 0, Math.PI*2);
-                    ctx.fillStyle = '#050505';
-                    ctx.fill();
-                    ctx.stroke();
+                    const x = padding + (i * step); const y = canvas.height - padding - ((val / max) * height);
+                    ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI*2); ctx.fillStyle = '#020202'; ctx.fill();
+                    ctx.lineWidth = 2; ctx.strokeStyle = '#D4AF37'; ctx.stroke();
                 });
             }
         }
 
-        // Boot the systems
         window.addEventListener('DOMContentLoaded', () => {
-            new UIController();
-            new ParticleEngine();
-            new TrackingAndData();
-            new AdminController();
-            
-            // Console easter egg
-            console.log("%c SYSTEM NOMINAL. WELCOME ADMIN.", "color: #D4AF37; font-size: 20px; font-weight: bold; background: #000; padding: 10px; border: 1px solid #D4AF37;");
+            new UIController(); new ParticleEngine(); new TrackingAndData(); new AdminController();
+            console.log("%c SYSTEM NOMINAL. ALL SECTORS ONLINE.", "color: #D4AF37; font-size: 16px; border: 1px solid #D4AF37; padding: 10px; background: #000;");
         });
-
     </script>
 </body>
 </html>
