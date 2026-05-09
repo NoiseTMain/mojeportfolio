@@ -3,185 +3,1276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adam Horvath | Portfolio & Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <title>Adam Horvath | Ultra Luxury Digital Experience</title>
+    <meta name="description" content="Futuristické portfolio a digitální vizitka - Adam Horvath">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
-        body { background: #050505; color: white; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .gold-text { background: linear-gradient(90deg, #AA8022, #D4AF37, #F3E5AB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        #cursor-glow { position: fixed; width: 450px; height: 450px; background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 0; }
-        .admin-view { display: none; }
-        input, textarea { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
-        input:focus, textarea:focus { border-color: #D4AF37 !important; outline: none; }
+        /* ==========================================================================
+           1. CSS VARIABLES & THEME SETUP
+           ========================================================================== */
+        :root {
+            --bg-main: #030303;
+            --bg-secondary: #0a0a0a;
+            --accent-gold: #D4AF37;
+            --accent-gold-dim: rgba(212, 175, 55, 0.3);
+            --accent-amber: #FFBF00;
+            --text-main: #F5F5F5;
+            --text-muted: #A0A0A0;
+            
+            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
+            
+            --glow-gold: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2);
+            --glow-amber: 0 0 30px rgba(255, 191, 0, 0.5);
+            
+            --font-head: 'Cinzel', serif;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.3s ease;
+            
+            --z-noise: 9999;
+            --z-cursor: 9998;
+            --z-nav: 1000;
+            --z-modal: 2000;
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Custom cursor */
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        body {
+            overflow-x: hidden;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, var(--bg-secondary) 0%, var(--bg-main) 100%);
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--accent-gold);
+            color: var(--bg-main);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-gold-dim);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-gold);
+        }
+
+        /* ==========================================================================
+           3. GLOBAL UTILITIES & EFFECTS
+           ========================================================================== */
+        
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: var(--z-noise);
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: var(--z-cursor);
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background-color: var(--accent-gold);
+            transition: width 0.2s, height 0.2s;
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid var(--accent-gold-dim);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+        }
+        .cursor-hover .cursor-dot {
+            width: 0; height: 0;
+        }
+        .cursor-hover .cursor-outline {
+            width: 60px; height: 60px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-color: var(--accent-gold);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-highlight);
+            border-left: 1px solid var(--glass-highlight);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-20deg);
+            transition: 0.7s;
+        }
+        .glass-panel:hover::before {
+            left: 150%;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 700; }
+        .gold-text {
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-amber));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow-gold);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 4rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: var(--transition-smooth);
+        }
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section { padding: 100px 10vw; position: relative; }
+
+        /* Buttons */
+        .btn-luxury {
+            display: inline-block;
+            padding: 15px 40px;
+            background: transparent;
+            color: var(--accent-gold);
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: 1px solid var(--accent-gold);
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+        .btn-luxury::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 0;
+            background: var(--accent-gold);
+            transition: var(--transition-smooth);
+            z-index: -1;
+        }
+        .btn-luxury:hover {
+            color: var(--bg-main);
+            box-shadow: var(--glow-gold);
+        }
+        .btn-luxury:hover::after { height: 100%; }
+
+        /* ==========================================================================
+           4. NAVIGATION
+           ========================================================================== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: var(--z-nav);
+            transition: var(--transition-smooth);
+        }
+        nav.scrolled {
+            background: rgba(3, 3, 3, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 50px;
+        }
+        .nav-logo {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition-fast);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute;
+            bottom: -5px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 1px; background: var(--accent-gold);
+            transition: var(--transition-smooth);
+        }
+        .nav-links a:hover { color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ==========================================================================
+           5. HERO SECTION
+           ========================================================================== */
+        #hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+        }
+        .hero-content {
+            z-index: 1;
+            position: relative;
+        }
+        .hero-subtitle {
+            font-family: var(--font-display);
+            color: var(--accent-gold);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: fadeIn 2s forwards 0.5s;
+        }
+        .hero-title {
+            font-size: 6rem;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: slideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s;
+        }
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            opacity: 0;
+            animation: fadeIn 2s forwards 1.5s;
+        }
+
+        /* ==========================================================================
+           6. ABOUT SECTION
+           ========================================================================== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .about-text p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .about-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .stat-item {
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-family: var(--font-head);
+            color: var(--accent-gold);
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ==========================================================================
+           7. SKILLS SECTION
+           ========================================================================== */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .skill-category { padding: 40px; }
+        .skill-category h3 {
+            margin-bottom: 30px;
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+        }
+        .skill-item { margin-bottom: 25px; }
+        .skill-header {
+            display: flex; justify-content: space-between; margin-bottom: 10px;
+        }
+        .skill-bar-bg {
+            width: 100%; height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px; overflow: hidden;
+            position: relative;
+        }
+        .skill-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-amber));
+            width: 0; /* Animated via JS */
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--accent-gold);
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ==========================================================================
+           8. TIMELINE (EXPERIENCE)
+           ========================================================================== */
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute; top: 0; left: 50%;
+            width: 2px; height: 100%;
+            background: var(--glass-border);
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            margin-bottom: 60px;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .timeline-item:nth-child(even) { justify-content: flex-start; }
+        .timeline-content {
+            width: 45%;
+            padding: 30px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: var(--transition-smooth);
+        }
+        .timeline-item.visible .timeline-content {
+            opacity: 1; transform: translateY(0);
+        }
+        .timeline-dot {
+            position: absolute;
+            top: 30px; left: -11%; /* Default right side */
+            width: 20px; height: 20px;
+            background: var(--bg-main);
+            border: 4px solid var(--accent-gold);
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: var(--glow-gold);
+        }
+        .timeline-item:nth-child(even) .timeline-dot { left: auto; right: -11%; }
+        .timeline-date { color: var(--accent-amber); font-weight: bold; margin-bottom: 10px; display: block; }
+        .timeline-title { font-size: 1.5rem; margin-bottom: 10px; }
+
+        /* ==========================================================================
+           9. PROJECTS
+           ========================================================================== */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        .project-card {
+            height: 400px;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .project-inner {
+            width: 100%; height: 100%;
+            padding: 30px;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            transition: transform 0.1s;
+        }
+        .project-category { color: var(--accent-gold); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;}
+        .project-title { font-size: 1.8rem; margin-bottom: 15px; transform: translateZ(30px); }
+        .project-desc { color: var(--text-muted); font-size: 0.9rem; transform: translateZ(20px); }
+
+        /* ==========================================================================
+           10. CONTACT FORM
+           ========================================================================== */
+        #kontakt { text-align: center; }
+        .contact-wrapper {
+            max-width: 800px; margin: 0 auto;
+            padding: 50px; text-align: left;
+        }
+        .form-group { margin-bottom: 30px; position: relative; }
+        .form-control {
+            width: 100%;
+            padding: 15px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+        }
+        .form-control:focus { outline: none; border-bottom-color: var(--accent-gold); }
+        .form-label {
+            position: absolute; top: 15px; left: 0;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: var(--transition-fast);
+        }
+        .form-control:focus ~ .form-label,
+        .form-control:valid ~ .form-label {
+            top: -10px; font-size: 0.8rem; color: var(--accent-gold);
+        }
+        .submit-btn { width: 100%; border: none; cursor: pointer; margin-top: 20px;}
+        
+        #form-message {
+            margin-top: 20px; font-size: 1.1rem; text-align: center; display: none;
+        }
+        .msg-success { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
+        .msg-error { color: #f87171; text-shadow: 0 0 10px rgba(248,113,113,0.5); }
+
+        /* ==========================================================================
+           11. ADMIN PANEL (HIDDEN BY DEFAULT)
+           ========================================================================== */
+        #admin-portal {
+            display: none; /* Toggled via JS */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-main); z-index: 3000;
+            overflow-y: auto;
+        }
+        .admin-login-wrapper {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .admin-login-box { padding: 50px; width: 400px; text-align: center; }
+        
+        .admin-dashboard { display: none; padding: 40px; }
+        .admin-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
+        .stat-card { padding: 30px; }
+        .stat-card h4 { color: var(--text-muted); margin-bottom: 10px; }
+        .stat-card .val { font-size: 2.5rem; color: var(--accent-gold); font-family: var(--font-display); }
+        
+        .admin-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .data-table th, .data-table td {
+            padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+        .data-table th { color: var(--accent-gold); }
+
+        .chart-container { width: 100%; height: 300px; margin-top: 20px; }
+
+        /* Footer Hidden Trigger for Admin */
+        .admin-trigger {
+            position: absolute; bottom: 10px; right: 10px; width: 20px; height: 20px; opacity: 0; cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Footer */
+        footer {
+            text-align: center; padding: 40px; border-top: 1px solid var(--glass-border);
+            position: relative;
+        }
+
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <div id="cursor-glow"></div>
+    <!-- Effects -->
+    <div class="noise-overlay"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
 
-    <!-- NAVIGACE -->
-    <nav id="public-nav" class="fixed w-full z-[60] p-6 flex justify-between items-center glass border-b border-white/5">
-        <div onclick="unlockAdmin()" class="text-2xl font-black tracking-tighter cursor-pointer hover:scale-110 transition duration-300">AH<span class="text-[#D4AF37]">.</span></div>
-        <div class="flex gap-8 text-[10px] uppercase tracking-[0.3em] font-light">
-            <a href="#projekty" class="hover:text-[#D4AF37] transition">Projekty</a>
-            <a href="#kontakt" class="hover:text-[#D4AF37] transition">Kontakt</a>
-        </div>
+    <!-- Nav -->
+    <nav id="navbar">
+        <a href="#hero" class="nav-logo" data-hover>AH.</a>
+        <ul class="nav-links">
+            <li><a href="#o-mne" data-hover>O mně</a></li>
+            <li><a href="#dovednosti" data-hover>Dovednosti</a></li>
+            <li><a href="#zkusenosti" data-hover>Zkušenosti</a></li>
+            <li><a href="#projekty" data-hover>Projekty</a></li>
+            <li><a href="#kontakt" data-hover>Kontakt</a></li>
+        </ul>
     </nav>
 
-    <!-- PUBLIC OBSAH -->
-    <div id="public-content">
-        <!-- HERO -->
-        <section class="min-h-screen flex items-center justify-center px-6 relative">
-            <div class="z-10 text-center">
-                <p class="text-[#D4AF37] tracking-[0.8em] uppercase text-[10px] mb-4 opacity-70">Personal Portfolio 2026</p>
-                <h1 class="text-6xl md:text-9xl font-black italic tracking-tighter mb-8 uppercase">Adam <br><span class="gold-text italic">Horvath</span></h1>
-                <div class="h-[1px] w-20 bg-gold-500 mx-auto mb-8"></div>
-                <p class="text-zinc-500 tracking-[0.2em] font-light max-w-lg mx-auto mb-12 leading-relaxed text-sm">Vytvářím digitální ekosystémy s důrazem na ultra-luxusní design a futuristické technologie.</p>
-                <a href="#kontakt" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-[#D4AF37] transition duration-500 shadow-xl">ZAČÍT PROJEKT</a>
-            </div>
-        </section>
+    <!-- Hero -->
+    <section id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+            <div class="hero-subtitle">Digitální Architekt</div>
+            <h1 class="hero-title gold-text">Adam Horvath</h1>
+            <p class="hero-desc">Tvořím ultra-prémiové digitální zážitky. Spojuji futuristický design s nekompromisní technologickou dokonalostí.</p>
+            <a href="#projekty" class="btn-luxury" data-hover>Prozkoumat portfolio</a>
+        </div>
+    </section>
 
-        <!-- PROJEKTY -->
-        <section id="projekty" class="py-32 px-6 container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-                <div class="space-y-6">
-                    <div class="h-[400px] glass rounded-3xl overflow-hidden group">
-                        <div class="w-full h-full bg-zinc-900 group-hover:scale-105 transition duration-700"></div>
-                    </div>
-                    <h3 class="text-2xl font-bold uppercase italic">Cyber Architecture</h3>
-                    <p class="text-zinc-500 text-sm tracking-wide">Next-gen cloudová infrastruktura.</p>
-                </div>
-                <div class="space-y-6 mt-20">
-                    <div class="h-[400px] glass rounded-3xl overflow-hidden group">
-                        <div class="w-full h-full bg-zinc-900 group-hover:scale-105 transition duration-700"></div>
-                    </div>
-                    <h3 class="text-2xl font-bold uppercase italic">Aura Interface</h3>
-                    <p class="text-zinc-500 text-sm tracking-wide">UX/UI design pro autonomní systémy.</p>
+    <!-- O Mně -->
+    <section id="o-mne">
+        <h2 class="section-title">O mně</h2>
+        <div class="about-grid">
+            <div class="glass-panel" style="padding: 40px;">
+                <h3 style="font-size: 2rem; margin-bottom: 20px;" class="gold-text">Vize budoucnosti</h3>
+                <div class="about-text">
+                    <p>Nejsem jen vývojář. Jsem inženýr digitálních emocí. Věřím, že webová stránka nemá být jen nosičem informací, ale pohlcujícím zážitkem, který rezonuje s uživatelem na hlubší úrovni.</p>
+                    <p>Inspiruji se estetikou značek jako Apple či Tesla a aplikuji principy kinematografie do interaktivního designu. Každý pixel, každá animace a každý řádek kódu má svůj přesný účel.</p>
                 </div>
             </div>
-        </section>
-
-        <!-- KONTAKT -->
-        <section id="kontakt" class="py-32 px-6">
-            <div class="glass p-12 max-w-2xl mx-auto rounded-[40px] border border-white/10 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 blur-[80px]"></div>
-                <h2 class="text-4xl font-black mb-2 text-center uppercase italic">Kontakt</h2>
-                <p class="text-zinc-500 text-center mb-12 text-sm tracking-widest uppercase">Napište svou vizi</p>
-                
-                <form id="contact-form" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="name" placeholder="Jméno" required class="w-full p-5 rounded-2xl">
-                        <input type="email" id="email" placeholder="Email" required class="w-full p-5 rounded-2xl">
+            <div>
+                <div class="about-stats">
+                    <div class="glass-panel stat-item">
+                        <div class="stat-number" data-target="10">0</div>
+                        <div class="stat-label">Let praxe</div>
                     </div>
-                    <textarea id="message" placeholder="Vaše zpráva..." rows="4" required class="w-full p-5 rounded-2xl resize-none"></textarea>
-                    <button type="submit" id="submit-btn" class="w-full py-5 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-[#D4AF37] transition-all duration-500">Odeslat zprávu</button>
-                </form>
-                <div id="status" class="mt-6 text-center font-bold tracking-widest text-xs"></div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ADMIN PANEL -->
-    <div id="admin-panel" class="admin-view fixed inset-0 z-[100] bg-[#050505] overflow-y-auto p-4 md:p-12">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-12">
-                <div>
-                    <h1 class="text-4xl font-black gold-text italic uppercase">Admin</h1>
-                    <p class="text-zinc-500 text-[10px] tracking-[0.4em] uppercase">Příchozí poptávky</p>
+                    <div class="glass-panel stat-item">
+                        <div class="stat-number" data-target="150">0</div>
+                        <div class="stat-label">Projektů</div>
+                    </div>
+                    <div class="glass-panel stat-item">
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">Spokojenost %</div>
+                    </div>
                 </div>
-                <button onclick="location.reload()" class="px-6 py-2 glass rounded-full hover:bg-white hover:text-black transition text-xs font-bold uppercase tracking-widest">Odhlásit</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dovednosti -->
+    <section id="dovednosti">
+        <h2 class="section-title">Technologický arzenál</h2>
+        <div class="skills-container">
+            <div class="glass-panel skill-category">
+                <h3>Frontend Architecture</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>JavaScript / TypeScript</span><span>95%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="95%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>WebGL / Canvas API</span><span>85%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="85%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>CSS3 / Animations</span><span>98%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="98%"></div></div>
+                </div>
+            </div>
+            <div class="glass-panel skill-category">
+                <h3>Backend & Data</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Node.js / Python</span><span>90%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Supabase / PostgreSQL</span><span>88%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="88%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Cloud / DevOps</span><span>80%</span></div>
+                    <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80%"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Zkušenosti Timeline -->
+    <section id="zkusenosti">
+        <h2 class="section-title">Cesta</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">2023 - Současnost</span>
+                    <h3 class="timeline-title">Lead Creative Developer</h3>
+                    <p class="text-muted">Architektura ultra-luxusních webových aplikací pro Fortune 500 klienty. Vedení týmu, implementace WebGL a komplexních 3D interakcí.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">2020 - 2023</span>
+                    <h3 class="timeline-title">Senior Fullstack Engineer</h3>
+                    <p class="text-muted">Vývoj škálovatelných SaaS platforem. Optimalizace výkonu, návrh databázových schémat a integrace real-time funkcí.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="glass-panel timeline-content">
+                    <span class="timeline-date">2016 - 2020</span>
+                    <h3 class="timeline-title">Digital Designer & Developer</h3>
+                    <p class="text-muted">Začátky v agenturním prostředí. Tvorba e-commerce řešení, branding a interaktivní design.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projekty -->
+    <section id="projekty">
+        <h2 class="section-title">Vybraná díla</h2>
+        <div class="projects-grid">
+            <!-- Project 1 -->
+            <div class="glass-panel project-card tilt-element">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48L3N2Zz4=') center/cover;">
+                    <div class="project-category">E-Commerce</div>
+                    <h3 class="project-title gold-text">Aura Luxury</h3>
+                    <p class="project-desc">Kompletní redesign high-end módní značky. Implementace 3D prohlížeče produktů a AR zkoušení.</p>
+                </div>
+            </div>
+            <!-- Project 2 -->
+            <div class="glass-panel project-card tilt-element">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMyMjIiLz48L3N2Zz4=') center/cover;">
+                    <div class="project-category">SaaS Dashboard</div>
+                    <h3 class="project-title gold-text">Nexus Analytics</h3>
+                    <p class="project-desc">Datový vizualizační nástroj pro kryptoměnové fondy s real-time WebSockets spojením.</p>
+                </div>
+            </div>
+            <!-- Project 3 -->
+            <div class="glass-panel project-card tilt-element">
+                <div class="project-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxMTEiLz48L3N2Zz4=') center/cover;">
+                    <div class="project-category">Web3 Platform</div>
+                    <h3 class="project-title gold-text">Onyx Protocol</h3>
+                    <p class="project-desc">Decentralizovaná směnárna s ultra-nízkou latencí a filmovými mikrointerakcemi.</p>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="#" class="btn-luxury" data-hover>Stáhnout kompletní CV (PDF)</a>
+        </div>
+    </section>
+
+    <!-- Kontakt -->
+    <section id="kontakt">
+        <h2 class="section-title">Iniciovat spojení</h2>
+        <div class="glass-panel contact-wrapper">
+            <form id="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" class="form-control" required autocomplete="off">
+                    <label for="name" class="form-label">Vaše jméno / Organizace</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" class="form-control" required autocomplete="off">
+                    <label for="email" class="form-label">Komunikační kanál (E-mail)</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" class="form-control" rows="4" required></textarea>
+                    <label for="message" class="form-label">Dekódovaná zpráva</label>
+                </div>
+                <button type="submit" class="btn-luxury submit-btn" data-hover>Odeslat signál</button>
+            </form>
+            <div id="form-message"></div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2026 Adam Horvath. All systems nominal.</p>
+        <!-- Tajný trigger pro Admin panel -->
+        <div class="admin-trigger" id="open-admin" data-hover></div>
+    </footer>
+
+    <!-- ==========================================================================
+         ADMIN PORTAL (Supabase Auth & Dashboard)
+         ========================================================================== -->
+    <div id="admin-portal">
+        <!-- Login View -->
+        <div class="admin-login-wrapper" id="admin-login-view">
+            <div class="glass-panel admin-login-box">
+                <h2 class="gold-text" style="margin-bottom: 30px;">System Override</h2>
+                <input type="email" id="admin-email" class="form-control" placeholder="Admin ID" style="margin-bottom: 20px;">
+                <input type="password" id="admin-pass" class="form-control" placeholder="Passcode" style="margin-bottom: 30px;">
+                <button class="btn-luxury" id="admin-login-btn" style="width: 100%;">Přihlásit</button>
+                <div id="admin-error" style="color: red; margin-top: 15px; font-size: 0.8rem;"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div class="admin-dashboard" id="admin-dashboard-view">
+            <div class="admin-header">
+                <h2><span class="gold-text">AH.</span> Command Center</h2>
+                <button class="btn-luxury" id="admin-logout-btn" style="padding: 10px 20px; font-size: 0.8rem;">Odpojit</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="glass-panel stat-card">
+                    <h4>Návštěvníků celkem</h4>
+                    <div class="val" id="stat-visitors">...</div>
+                </div>
+                <div class="glass-panel stat-card">
+                    <h4>Přečtených zpráv</h4>
+                    <div class="val" id="stat-messages">...</div>
+                </div>
+                <div class="glass-panel stat-card">
+                    <h4>Systémové eventy</h4>
+                    <div class="val" id="stat-events">...</div>
+                </div>
             </div>
 
-            <div id="messages-container" class="grid grid-cols-1 gap-4">
-                <!-- Zprávy se načtou sem -->
+            <div class="admin-tables">
+                <div class="glass-panel" style="padding: 20px;">
+                    <h3 class="gold-text">Zachycené signály (Zprávy)</h3>
+                    <table class="data-table" id="messages-table">
+                        <thead><tr><th>Čas</th><th>Od</th><th>Zpráva</th></tr></thead>
+                        <tbody><!-- Filled via JS --></tbody>
+                    </table>
+                </div>
+                <div class="glass-panel" style="padding: 20px;">
+                    <h3 class="gold-text">Aktivita sítě (Návštěvy)</h3>
+                    <canvas id="visitors-chart" class="chart-container"></canvas>
+                </div>
             </div>
+            <button class="btn-luxury" id="close-admin-btn" style="margin-top: 40px;">Zpět na veřejnou zónu</button>
         </div>
     </div>
 
+    <!-- ==========================================================================
+         JAVASCRIPT LOGIC
+         ========================================================================== -->
     <script>
-        // !!! DOPLŇ SVÉ ÚDAJE ZE SUPABASE ZDE !!!
-        const SUPABASE_URL = 'TVOJE_URL_ADRESA';
-        const SUPABASE_ANON_KEY = 'TVŮJ_ANON_KLÍČ';
-        const ADMIN_PASS = 'admin123'; // Tvůj kód pro vstup do adminu
+        /**
+         * SUPABASE KONFIGURACE
+         * ZDE DOPLŇ SVÉ ÚDAJE (Požadavky klienta).
+         * I bez platných klíčů poběží UI logiky, ale dotazy padnou na error.
+         */
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
         
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Supabase init error (missing keys?):", e);
+        }
 
-        // MOUSE GLOW
-        const glow = document.getElementById('cursor-glow');
-        document.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
+        /* ==========================================================================
+           1. UI & ANIMATION ENGINE
+           ========================================================================== */
+        class UIController {
+            constructor() {
+                this.cursorDot = document.getElementById('cursor-dot');
+                this.cursorOutline = document.getElementById('cursor-outline');
+                this.navbar = document.getElementById('navbar');
+                this.hoverElements = document.querySelectorAll('[data-hover], input, textarea, button');
+                this.sections = document.querySelectorAll('.section-title, .timeline-item');
+                this.statNumbers = document.querySelectorAll('.stat-number');
+                this.skillBars = document.querySelectorAll('.skill-bar-fill');
+                this.tiltElements = document.querySelectorAll('.tilt-element');
+                
+                this.init();
+            }
+
+            init() {
+                this.initCursor();
+                this.initScroll();
+                this.initIntersectionObserver();
+                this.initTiltEffect();
+            }
+
+            initCursor() {
+                window.addEventListener('mousemove', (e) => {
+                    const posX = e.clientX;
+                    const posY = e.clientY;
+                    
+                    // Bez zpoždění pro tečku
+                    this.cursorDot.style.left = `${posX}px`;
+                    this.cursorDot.style.top = `${posY}px`;
+                    
+                    // Malé zpoždění pro outline (smooth trail)
+                    this.cursorOutline.animate({
+                        left: `${posX}px`,
+                        top: `${posY}px`
+                    }, { duration: 500, fill: "forwards", easing: "ease-out" });
+                });
+
+                this.hoverElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+                });
+            }
+
+            initScroll() {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 50) {
+                        this.navbar.classList.add('scrolled');
+                    } else {
+                        this.navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+
+            initIntersectionObserver() {
+                const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            
+                            // Animace statistik
+                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'o-mne') {
+                                this.animateStats();
+                            }
+                            // Animace skills
+                            if(entry.target.classList.contains('section-title') && entry.target.parentElement.id === 'dovednosti') {
+                                this.animateSkills();
+                            }
+                        }
+                    });
+                }, observerOptions);
+
+                this.sections.forEach(sec => observer.observe(sec));
+            }
+
+            animateStats() {
+                this.statNumbers.forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-target'));
+                    let current = 0;
+                    const increment = target / 50; // speed
+                    const updateCounter = () => {
+                        current += increment;
+                        if(current < target) {
+                            stat.innerText = Math.ceil(current) + (target > 50 ? '+' : '');
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            stat.innerText = target + (target > 50 ? '+' : '');
+                        }
+                    };
+                    updateCounter();
+                });
+            }
+
+            animateSkills() {
+                this.skillBars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width;
+                });
+            }
+
+            initTiltEffect() {
+                this.tiltElements.forEach(el => {
+                    const inner = el.querySelector('.project-inner');
+                    el.addEventListener('mousemove', e => {
+                        const rect = el.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        
+                        const rotateX = ((y - centerY) / centerY) * -10;
+                        const rotateY = ((x - centerX) / centerX) * 10;
+                        
+                        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        inner.style.transform = `rotateX(0) rotateY(0)`;
+                    });
+                });
+            }
+        }
+
+        /* ==========================================================================
+           2. CANVAS PARTICLE SYSTEM (HERO)
+           ========================================================================== */
+        class ParticleEngine {
+            constructor() {
+                this.canvas = document.getElementById('hero-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: null, y: null, radius: 150 };
+                
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.canvas.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.x; this.mouse.y = e.y;
+                });
+                
+                this.initParticles();
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            initParticles() {
+                this.particles = [];
+                const numParticles = (this.canvas.width * this.canvas.height) / 9000;
+                for (let i = 0; i < numParticles; i++) {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * this.canvas.height;
+                    const size = Math.random() * 2;
+                    const speedX = (Math.random() * 1) - 0.5;
+                    const speedY = (Math.random() * 1) - 0.5;
+                    this.particles.push({ x, y, size, speedX, speedY, baseSize: size });
+                }
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                for (let i = 0; i < this.particles.length; i++) {
+                    let p = this.particles[i];
+                    p.x += p.speedX; p.y += p.speedY;
+                    
+                    if (p.x < 0 || p.x > this.canvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > this.canvas.height) p.speedY *= -1;
+
+                    // Mouse interaction
+                    if (this.mouse.x != null) {
+                        let dx = this.mouse.x - p.x;
+                        let dy = this.mouse.y - p.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < this.mouse.radius) {
+                            p.size = p.baseSize * 3;
+                            this.ctx.fillStyle = '#D4AF37';
+                        } else {
+                            p.size = p.baseSize;
+                            this.ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                        }
+                    }
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+
+                    // Connect lines
+                    for (let j = i; j < this.particles.length; j++) {
+                        let p2 = this.particles[j];
+                        let dx = p.x - p2.x; let dy = p.y - p2.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < 100) {
+                            this.ctx.beginPath();
+                            this.ctx.strokeStyle = `rgba(212, 175, 55, ${1 - dist/100})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.moveTo(p.x, p.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        /* ==========================================================================
+           3. SUPABASE TRACKING & FORM LOGIC
+           ========================================================================== */
+        class TrackingAndData {
+            constructor() {
+                this.initTracking();
+                this.initForm();
+            }
+
+            async initTracking() {
+                if(!supabase) return;
+                try {
+                    // Získání IP přes volnou API (pouze pro demo účely)
+                    let ipRes = await fetch('https://api.ipify.org?format=json');
+                    let ipData = await ipRes.json();
+                    
+                    // Zápis do Supabase `visitors`
+                    await supabase.from('visitors').insert([{
+                        ip_address: ipData.ip,
+                        user_agent: navigator.userAgent,
+                        device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+                    }]);
+
+                    // Zápis eventu
+                    await supabase.from('analytics_events').insert([{
+                        event_name: 'page_load', path: window.location.pathname
+                    }]);
+                } catch(e) { console.log('Tracking not active (DB missing/CORS).'); }
+            }
+
+            initForm() {
+                const form = document.getElementById('contact-form');
+                const msgBox = document.getElementById('form-message');
+                
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if(!supabase) {
+                        this.showMessage(msgBox, "Systém momentálně nekomunikuje se serverem (Chybí API klíče).", "msg-error");
+                        return;
+                    }
+
+                    const btn = form.querySelector('button');
+                    btn.innerText = "Šifruji & Odesílám...";
+                    
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const message = document.getElementById('message').value;
+
+                    try {
+                        const { error } = await supabase.from('contact_messages').insert([
+                            { name, email, message }
+                        ]);
+
+                        if(error) throw error;
+                        
+                        this.showMessage(msgBox, "Signál úspěšně přijat. Odpovím v nejbližší době.", "msg-success");
+                        form.reset();
+                    } catch(err) {
+                        this.showMessage(msgBox, `Chyba přenosu: ${err.message}`, "msg-error");
+                    } finally {
+                        btn.innerText = "Odeslat signál";
+                    }
+                });
+            }
+
+            showMessage(el, text, className) {
+                el.style.display = 'block';
+                el.innerText = text;
+                el.className = className;
+                setTimeout(() => el.style.display = 'none', 5000);
+            }
+        }
+
+        /* ==========================================================================
+           4. ADMIN PANEL & REALTIME DASHBOARD (CANVAS CHARTS)
+           ========================================================================== */
+        class AdminController {
+            constructor() {
+                this.trigger = document.getElementById('open-admin');
+                this.portal = document.getElementById('admin-portal');
+                this.loginView = document.getElementById('admin-login-view');
+                this.dashView = document.getElementById('admin-dashboard-view');
+                this.closeBtn = document.getElementById('close-admin-btn');
+                
+                this.initEvents();
+            }
+
+            initEvents() {
+                // Skryté tlačítko v patičce
+                this.trigger.addEventListener('click', () => {
+                    this.portal.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // Lock scroll
+                    this.checkSession();
+                });
+
+                this.closeBtn.addEventListener('click', () => {
+                    this.portal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+
+                document.getElementById('admin-login-btn').addEventListener('click', () => this.login());
+                document.getElementById('admin-logout-btn').addEventListener('click', () => this.logout());
+            }
+
+            async checkSession() {
+                if(!supabase) return;
+                const { data: { session } } = await supabase.auth.getSession();
+                if(session) {
+                    this.showDashboard();
+                } else {
+                    this.showLogin();
+                }
+            }
+
+            async login() {
+                if(!supabase) {
+                    document.getElementById('admin-error').innerText = "Supabase DB není připojena.";
+                    return;
+                }
+                const email = document.getElementById('admin-email').value;
+                const pass = document.getElementById('admin-pass').value;
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+                
+                if(error) document.getElementById('admin-error').innerText = "Přístup zamítnut.";
+                else this.showDashboard();
+            }
+
+            async logout() {
+                if(supabase) await supabase.auth.signOut();
+                this.showLogin();
+            }
+
+            showLogin() {
+                this.loginView.style.display = 'flex';
+                this.dashView.style.display = 'none';
+            }
+
+            showDashboard() {
+                this.loginView.style.display = 'none';
+                this.dashView.style.display = 'block';
+                this.loadData();
+                this.initRealtime();
+            }
+
+            async loadData() {
+                if(!supabase) return;
+                
+                // Fetch stats
+                const visitors = await supabase.from('visitors').select('id', { count: 'exact' });
+                const messages = await supabase.from('contact_messages').select('id', { count: 'exact' });
+                const events = await supabase.from('analytics_events').select('id', { count: 'exact' });
+                
+                document.getElementById('stat-visitors').innerText = visitors.count || 0;
+                document.getElementById('stat-messages').innerText = messages.count || 0;
+                document.getElementById('stat-events').innerText = events.count || 0;
+
+                // Fetch messages
+                const { data: msgs } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false }).limit(5);
+                const tbody = document.querySelector('#messages-table tbody');
+                tbody.innerHTML = '';
+                if(msgs) {
+                    msgs.forEach(m => {
+                        const d = new Date(m.created_at).toLocaleString('cs-CZ');
+                        tbody.innerHTML += `<tr><td>${d}</td><td>${m.email}</td><td>${m.message.substring(0,30)}...</td></tr>`;
+                    });
+                }
+
+                this.drawCustomCanvasChart();
+            }
+
+            initRealtime() {
+                if(!supabase) return;
+                // Realtime poslech na zprávy
+                supabase.channel('custom-insert-channel')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contact_messages' }, payload => {
+                    this.loadData(); // Refresh UI upon new message
+                    // Play sound or notification logic could go here
+                })
+                .subscribe();
+            }
+
+            // Custom Charting bez externích knihoven (požadavek)
+            drawCustomCanvasChart() {
+                const canvas = document.getElementById('visitors-chart');
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = 300;
+
+                // Mock data pro graf (pro ukázku, v reálu group by date z Supabase)
+                const data = [10, 25, 15, 40, 35, 60, 50]; 
+                const max = Math.max(...data);
+                
+                ctx.clearRect(0,0, canvas.width, canvas.height);
+                
+                const padding = 40;
+                const width = canvas.width - padding*2;
+                const height = canvas.height - padding*2;
+                const step = width / (data.length - 1);
+
+                // Grid lines
+                ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                for(let i=0; i<5; i++) {
+                    let y = padding + (height/4)*i;
+                    ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(padding+width, y); ctx.stroke();
+                }
+
+                // Line
+                ctx.beginPath();
+                ctx.strokeStyle = '#D4AF37';
+                ctx.lineWidth = 3;
+                
+                data.forEach((val, i) => {
+                    const x = padding + (i * step);
+                    const y = canvas.height - padding - ((val / max) * height);
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                // Gradient Fill under line
+                ctx.lineTo(padding + width, canvas.height - padding);
+                ctx.lineTo(padding, canvas.height - padding);
+                ctx.closePath();
+                const grad = ctx.createLinearGradient(0, padding, 0, canvas.height-padding);
+                grad.addColorStop(0, 'rgba(212, 175, 55, 0.5)');
+                grad.addColorStop(1, 'rgba(212, 175, 55, 0)');
+                ctx.fillStyle = grad;
+                ctx.fill();
+                
+                // Points
+                data.forEach((val, i) => {
+                    const x = padding + (i * step);
+                    const y = canvas.height - padding - ((val / max) * height);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI*2);
+                    ctx.fillStyle = '#050505';
+                    ctx.fill();
+                    ctx.stroke();
+                });
+            }
+        }
+
+        // Boot the systems
+        window.addEventListener('DOMContentLoaded', () => {
+            new UIController();
+            new ParticleEngine();
+            new TrackingAndData();
+            new AdminController();
+            
+            // Console easter egg
+            console.log("%c SYSTEM NOMINAL. WELCOME ADMIN.", "color: #D4AF37; font-size: 20px; font-weight: bold; background: #000; padding: 10px; border: 1px solid #D4AF37;");
         });
 
-        // FORMULÁŘ
-        const form = document.getElementById('contact-form');
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const status = document.getElementById('status');
-            btn.innerText = 'ODESÍLÁM...';
-            
-            const { error } = await sb.from('contact_messages').insert([{ 
-                name: document.getElementById('name').value, 
-                email: document.getElementById('email').value, 
-                message: document.getElementById('message').value 
-            }]);
-
-            if (error) {
-                status.innerText = 'CHYBA PŘI ODESÍLÁNÍ';
-                status.style.color = '#ef4444';
-            } else {
-                status.innerText = 'ZPRÁVA BYLA ÚSPĚŠNĚ DORUČENA';
-                status.style.color = '#D4AF37';
-                form.reset();
-                btn.innerText = 'ODESLÁNO';
-            }
-        };
-
-        // ADMIN SYSTÉM
-        async function unlockAdmin() {
-            const pass = prompt("Zadejte přístupový kód:");
-            if (pass === ADMIN_PASS) {
-                document.getElementById('public-nav').style.display = 'none';
-                document.getElementById('public-content').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                fetchMessages();
-            }
-        }
-
-        async function fetchMessages() {
-            const { data, error } = await sb.from('contact_messages').select('*').order('created_at', { ascending: false });
-            if (error) return;
-
-            const container = document.getElementById('messages-container');
-            container.innerHTML = data.length ? '' : '<p class="text-zinc-600 text-center py-20">Žádné nové zprávy</p>';
-            
-            data.forEach(msg => {
-                const date = new Date(msg.created_at).toLocaleDateString('cs-CZ');
-                container.innerHTML += `
-                    <div class="glass p-8 rounded-3xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div>
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="text-[10px] text-zinc-500 uppercase tracking-widest">${date}</span>
-                                <span class="text-[#D4AF37] font-bold uppercase tracking-tighter">${msg.name}</span>
-                            </div>
-                            <p class="text-zinc-400 text-sm mb-1">${msg.email}</p>
-                            <p class="text-white text-lg font-light">${msg.message}</p>
-                        </div>
-                        <button onclick="deleteMsg('${msg.id}')" class="text-[10px] font-black uppercase tracking-widest text-red-500/50 hover:text-red-500 transition">Smazat</button>
-                    </div>
-                `;
-            });
-        }
-
-        async function deleteMsg(id) {
-            if (confirm('Smazat tuto zprávu?')) {
-                await sb.from('contact_messages').delete().eq('id', id);
-                fetchMessages();
-            }
-        }
     </script>
 </body>
 </html>
