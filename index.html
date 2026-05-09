@@ -333,6 +333,141 @@
         .stat-number { font-size: 3.5rem; font-family: var(--font-head); color: var(--accent-gold); margin-bottom: 10px; text-shadow: var(--glow-gold);}
         .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted);}
 
+
+
+
+
+                /* --- Fix pro čitelnost sekce O Mně --- */
+        .container-limited {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-profile-card {
+            padding: 60px !important;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            background: rgba(10, 10, 10, 0.8) !important; /* Tmavy podklad pro čitelnost */
+            border: 1px solid rgba(212, 175, 55, 0.3) !important;
+        }
+
+        .system-tag {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+            opacity: 0.7;
+        }
+
+        .about-text-content {
+            max-width: 800px;
+        }
+
+        .about-text-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0; /* Světlejší šedá pro čitelnost */
+            margin-bottom: 20px;
+        }
+
+        .about-text-content .highlight-p {
+            font-size: 1.4rem;
+            color: var(--text-main);
+            font-weight: 400;
+            border-left: 3px solid var(--accent-gold);
+            padding-left: 25px;
+            margin-bottom: 35px;
+        }
+
+        .personal-data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .data-item label {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+        }
+
+        .data-item span {
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .status-online {
+            color: #4ade80 !important;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        .stats-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-box-luxury {
+            padding: 40px;
+            text-align: center;
+            background: rgba(212, 175, 55, 0.03) !important;
+        }
+
+        .stat-box-luxury.mini { padding: 25px; }
+
+        .mini-stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .gold-link {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .gold-link:hover {
+            letter-spacing: 4px;
+            text-shadow: var(--glow-gold);
+        }
+
+        .contact-quick-link {
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), transparent) !important;
+        }
+
+        /* Mobilní fix */
+        @media (max-width: 992px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .main-profile-card { padding: 30px !important; }
+            .section-title { font-size: 2.5rem; }
+        }
+
+
+
+
+
+
+
+        
+
         /* ==========================================================================
            7. SKILLS SECTION (MERGED WITH REAL CV SKILLS)
            ========================================================================== */
@@ -518,38 +653,70 @@
         </div>
     </section>
 
-    <!-- O Mně (Expanded with Personal Data) -->
+        <!-- O Mně - Redesign pro maximální čitelnost -->
     <section id="o-mne">
-        <h2 class="section-title"><span>Identifikace</span> Subjektu</h2>
-        <div class="about-grid">
-            <div class="glass-panel" style="padding: 50px;">
-                <h3 style="font-size: 2.2rem; margin-bottom: 25px; font-family: var(--font-head);" class="gold-text">Profil & Vize</h3>
-                <div class="about-text">
-                    <p>Jsem energetický a cílevědomý profesionál s vášní pro kreativitu a lidské interakce. Věřím, že technologie nemá být jen chladným nástrojem, ale zážitkem. Mám schopnost se extrémně rychle přizpůsobit novým situacím i pracovním prostředím a vždy usiluji o to překračovat očekávání a dosahovat vynikajících výsledků.</p>
-                    <p>Díky mým mírným organizačním dovednostem a schopnosti řídit více úkolů současně, efektivně propojuji preciznost nabytou při studiu manuálních oborů s komplexním myšlením v IT sféře. Inspiruji se dokonalostí značek jako Apple či Tesla a aplikuji tyto principy do všeho, co tvořím.</p>
-                </div>
-                
-                <ul class="personal-info-list">
-                    <li><span>Datum narození</span> <span>16. duben 2007</span></li>
-                    <li><span>Lokalita</span> <span>Špitálská 12, 261 01 Příbram</span></li>
-                    <li><span>E-mail</span> <span>adamhorvath07@icloud.com</span></li>
-                    <li><span>Telefon</span> <span>+420 604 133 151</span></li>
-                    <li><span>Řidičské oprávnění</span> <span>Skupina AM, B1, B</span></li>
-                </ul>
-            </div>
-            <div class="about-stats-container">
-                <div class="glass-panel stat-item" style="height: 100%;">
-                    <div class="stat-number" data-target="100">0</div>
-                    <div class="stat-label">Spolehlivost & Nasazení (%)</div>
-                </div>
-                <div class="about-stats">
-                    <div class="glass-panel stat-item">
-                        <div class="stat-number" data-target="7">0</div>
-                        <div class="stat-label">Pracovních rolí</div>
+        <div class="container-limited">
+            <h2 class="section-title"><span>Identifikace</span> Subjektu</h2>
+            
+            <div class="about-grid">
+                <!-- Levý panel: Hlavní text -->
+                <div class="glass-panel main-profile-card">
+                    <div class="card-header">
+                        <span class="system-tag">Core.Profile_v2.0</span>
+                        <h3 class="gold-text">Profil & Vize</h3>
                     </div>
-                    <div class="glass-panel stat-item">
-                        <div class="stat-number" data-target="2">0</div>
-                        <div class="stat-label">Studované obory</div>
+                    
+                    <div class="about-text-content">
+                        <p class="highlight-p">
+                            Jsem energetický a cílevědomý profesionál s vášní pro kreativitu a lidské interakce. 
+                            Věřím, že technologie nemá být jen chladným nástrojem, ale <strong>výjimečným zážitkem</strong>.
+                        </p>
+                        <p>
+                            Mám schopnost se extrémně rychle přizpůsobit novým výzvám. Efektivně propojuji preciznost 
+                            nabytou při studiu manuálních oborů s komplexním myšlením v IT sféře. Inspiruji se 
+                            dokonalostí značek jako Apple či Tesla a tyto principy aplikuji do všeho, co tvořím.
+                        </p>
+                    </div>
+                    
+                    <div class="personal-data-grid">
+                        <div class="data-item">
+                            <label>Lokalita</label>
+                            <span>Příbram, CZ</span>
+                        </div>
+                        <div class="data-item">
+                            <label>Specializace</label>
+                            <span>IT & Digital Design</span>
+                        </div>
+                        <div class="data-item">
+                            <label>Email</label>
+                            <span>adamhorvath07@icloud.com</span>
+                        </div>
+                        <div class="data-item">
+                            <label>Status</label>
+                            <span class="status-online">Online / Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pravý panel: Statistiky -->
+                <div class="stats-sidebar">
+                    <div class="glass-panel stat-box-luxury">
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">Spolehlivost & Nasazení %</div>
+                    </div>
+                    <div class="mini-stats-row">
+                        <div class="glass-panel stat-box-luxury mini">
+                            <div class="stat-number" data-target="7">0</div>
+                            <div class="stat-label">Rolí</div>
+                        </div>
+                        <div class="glass-panel stat-box-luxury mini">
+                            <div class="stat-number" data-target="2">0</div>
+                            <div class="stat-label">Obory</div>
+                        </div>
+                    </div>
+                    <div class="glass-panel contact-quick-link">
+                        <p>Potřebujete digitální řešení?</p>
+                        <a href="#kontakt" class="gold-link">Iniciovat spojení →</a>
                     </div>
                 </div>
             </div>
